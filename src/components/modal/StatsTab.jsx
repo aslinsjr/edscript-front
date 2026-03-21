@@ -61,7 +61,7 @@ export default function StatsTab({ ev, sport }) {
     );
   }
 
-  const availableStats = SOCCER_STATS.filter(s => stats[s.key]);
+  const availableStats = SOCCER_STATS.filter(s => stats[s.key] && typeof stats[s.key] === 'object');
 
   if (availableStats.length === 0) {
     return (

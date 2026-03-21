@@ -29,6 +29,7 @@ function buildGenericRows(scores, periodLabels, totalKey) {
     const k = String(nk);
     if (totalKey && k === totalKey) continue;
     const entry = scores[k];
+    if (!entry) continue;
     rows.push({
       key: k,
       label: periodLabels[k] || `Período ${k}`,
@@ -61,6 +62,7 @@ function buildTennisRows(scores) {
   for (const nk of numericKeys) {
     const k = String(nk);
     const entry = scores[k];
+    if (!entry) continue;
     rows.push({
       key: k,
       label: `Set ${nk}`,
