@@ -1,4 +1,4 @@
-const BASE = 'http://localhost:3000';
+const BASE = 'https://edscript-api.vercel.app';
 let currentPath = '/api/events/inplay';
 let lastData = null;
 let currentView = 'cards';
