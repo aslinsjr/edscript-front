@@ -222,7 +222,11 @@ function renderCards(results) {
     card.className = 'event-card';
 
     // Detect type
-    if (item.home && item.away) {
+    const itemSport = getSportType(item);
+    if (itemSport === 'racing' && item.home && !item.away) {
+      renderRacingCard(card, item);
+      card.addEventListener('click', () => openModal(item));
+    } else if (item.home && item.away) {
       renderEventCard(card, item);
       card.addEventListener('click', () => openModal(item));
     } else if (item.odds) {
@@ -275,6 +279,25 @@ function renderEventCard(card, ev) {
   }
 
   card.innerHTML = html;
+}
+
+function renderRacingCard(card, ev) {
+  const [statusLabel, statusClass] = STATUS_MAP[ev.time_status] || ['Desconhecido', 'status-ended'];
+  const date = new Date(parseInt(ev.time) * 1000).toLocaleString('pt-BR');
+  const sportEmoji = ev.sport_id === '4' ? '🐕' : '🐎';
+
+  card.innerHTML = `
+    <div class="card-league">
+      ${sportEmoji} ${ev.league?.name || ev.home?.name || '—'}
+      <span class="meta-tag ${statusClass}">${statusLabel}</span>
+      ${ev.round ? `<span class="meta-tag">Corrida ${ev.round}</span>` : ''}
+    </div>
+    <div class="card-teams">${ev.home?.name || '—'}</div>
+    <div class="card-meta">
+      <span class="meta-tag">ID: ${ev.id}</span>
+      <span class="meta-tag">${date}</span>
+      ${ev.bet365_id ? `<span class="meta-tag">Bet365: ${ev.bet365_id}</span>` : ''}
+    </div>`;
 }
 
 function renderOddsCard(card, item) {
@@ -416,8 +439,15 @@ function openModal(ev) {
   const timerBadge = timerStr(ev, sport);
   document.getElementById('m-league').innerHTML =
     `🏆 ${ev.league?.name || '—'} ${ev.league?.cc ? `<span class="meta-tag">${ev.league.cc.toUpperCase()}</span>` : ''} <span class="meta-tag ${statusClass}">${statusLabel}</span>${timerBadge ? ` <span class="meta-tag">${timerBadge}</span>` : ''}`;
-  const separator = sport === 'combat' ? ' 🥊 ' : '  vs  ';
-  document.getElementById('m-teams').textContent = `${ev.home?.name || '—'}${separator}${ev.away?.name || '—'}`;
+  if (sport === 'racing') {
+    const sportEmoji = ev.sport_id === '4' ? '🐕' : '🐎';
+    document.getElementById('m-league').innerHTML =
+      `${sportEmoji} ${ev.league?.name || '—'} <span class="meta-tag ${statusClass}">${statusLabel}</span>${ev.round ? ` <span class="meta-tag">Corrida ${ev.round}</span>` : ''}`;
+    document.getElementById('m-teams').textContent = ev.home?.name || '—';
+  } else {
+    const separator = sport === 'combat' ? ' 🥊 ' : '  vs  ';
+    document.getElementById('m-teams').textContent = `${ev.home?.name || '—'}${separator}${ev.away?.name || '—'}`;
+  }
   document.getElementById('m-score').textContent = ev.ss || '';
 
   document.querySelectorAll('.m-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
@@ -468,6 +498,7 @@ function renderModalTab(tab) {
 
     const timerRow = timer ? ['Tempo', timer] : null;
     const isCombat = sport === 'combat';
+    const isRacing = sport === 'racing';
 
     const infos = [
       ['ID do Evento', ev.id],
@@ -476,10 +507,13 @@ function renderModalTab(tab) {
       ['Bet365 ID', ev.bet365_id || '—'],
       ['Liga ID', ev.league?.id || '—'],
       ['País', (ev.league?.cc || ev.home?.cc || '—').toUpperCase()],
-      [isCombat ? 'Lutador A (ID)' : 'Time Casa ID', ev.home?.id || '—'],
-      [isCombat ? 'Lutador B (ID)' : 'Time Fora ID', ev.away?.id || '—'],
+      isRacing ? ['Hipódromo/Pista', ev.home?.name || '—'] : null,
+      isRacing ? ['Hipódromo ID', ev.home?.id || '—'] : null,
+      isRacing ? ['Corrida nº', ev.round || '—'] : null,
+      !isRacing ? [isCombat ? 'Lutador A (ID)' : 'Time Casa ID', ev.home?.id || '—'] : null,
+      !isRacing ? [isCombat ? 'Lutador B (ID)' : 'Time Fora ID', ev.away?.id || '—'] : null,
       timerRow,
-      !isCombat ? ['Período', periodLabel] : null,
+      (!isCombat && !isRacing) ? ['Período', periodLabel] : null,
     ].filter(Boolean);
 
     // Sport-specific extra fields
