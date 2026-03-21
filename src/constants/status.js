@@ -1,0 +1,16 @@
+export const STATUS_MAP = {
+  '0':  { label: 'Não Iniciado',    cls: 'upcoming' },
+  '1':  { label: 'Ao Vivo',         cls: 'live' },
+  '2':  { label: 'A Corrigir',      cls: 'ended' },
+  '3':  { label: 'Encerrado',       cls: 'ended' },
+  '4':  { label: 'Adiado',          cls: 'ended' },
+  '5':  { label: 'Cancelado',       cls: 'ended' },
+  '6':  { label: 'W.O.',            cls: 'ended' },
+  '7':  { label: 'Interrompido',    cls: 'ended' },
+  '8':  { label: 'Abandonado',      cls: 'ended' },
+  '9':  { label: 'Retirado',        cls: 'ended' },
+  '10': { label: 'Suspenso',        cls: 'ended' },
+  '11': { label: 'Dec. por FA',     cls: 'ended' },
+  '12': { label: 'Desclassificado', cls: 'ended' },
+  '99': { label: 'Removido',        cls: 'ended' },
+};
