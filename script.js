@@ -3,7 +3,77 @@ let currentPath = '/api/events/inplay';
 let lastData = null;
 let currentView = 'cards';
 
-const STATUS_MAP = { '0': ['Anunciado','status-upcoming'], '1': ['Ao Vivo','status-live'], '2': ['Encerrado','status-ended'], '3': ['Adiado','status-ended'], '4': ['Cancelado','status-ended'], '5': ['Suspenso','status-ended'] };
+const STATUS_MAP = {
+  '0':  ['Não Iniciado',    'status-upcoming'],
+  '1':  ['Ao Vivo',         'status-live'],
+  '2':  ['A Corrigir',      'status-ended'],
+  '3':  ['Encerrado',       'status-ended'],
+  '4':  ['Adiado',          'status-ended'],
+  '5':  ['Cancelado',       'status-ended'],
+  '6':  ['W.O.',            'status-ended'],
+  '7':  ['Interrompido',    'status-ended'],
+  '8':  ['Abandonado',      'status-ended'],
+  '9':  ['Retirado',        'status-ended'],
+  '10': ['Suspenso',        'status-ended'],
+  '11': ['Dec. por FA',     'status-ended'],
+  '12': ['Desclassificado', 'status-ended'],
+  '99': ['Removido',        'status-ended'],
+};
+
+const SPORT_TYPE = {
+  1:'soccer', 83:'soccer',
+  13:'tennis',
+  18:'basketball',
+  17:'icehockey',
+  91:'volleyball', 95:'volleyball',
+  92:'tabletennis',
+  78:'handball',
+  2:'racing', 4:'racing',
+  9:'combat', 162:'combat',
+  3:'cricket', 16:'baseball',
+  14:'snooker', 15:'darts',
+  94:'badminton', 110:'waterpolo',
+};
+
+function getSportType(ev) { return SPORT_TYPE[parseInt(ev.sport_id)] || 'generic'; }
+
+function timerStr(ev, sport) {
+  if (!ev.timer) return null;
+  const t = ev.timer;
+  const pad = n => String(n || 0).padStart(2, '0');
+  if (sport === 'basketball') {
+    const q = t.q ? `Q${t.q}` : '';
+    const time = t.tm !== undefined ? ` ${t.tm}:${pad(t.ts)}` : '';
+    return (q + time).trim();
+  }
+  if (sport === 'icehockey') {
+    const P = {'1':'P1','2':'P2','3':'P3','4':'OT','5':'SO'};
+    const p = t.q ? (P[t.q] || `P${t.q}`) : '';
+    const time = t.tm !== undefined ? ` ${t.tm}:${pad(t.ts)}` : '';
+    return (p + time).trim();
+  }
+  let s = `${t.tm}'`;
+  if (t.ta && parseInt(t.ta) > 0) s += `+${t.ta}`;
+  return s;
+}
+
+function formatScore(ev, sport) {
+  if (!ev.ss) return '';
+  if (sport === 'tennis') {
+    return ev.ss + (ev.points ? ` <span style="font-size:14px;opacity:0.7">(${ev.points})</span>` : '');
+  }
+  if (sport === 'volleyball') {
+    return `<span style="font-size:13px;opacity:0.55">ponto: </span>${ev.ss}`;
+  }
+  return ev.ss;
+}
+
+function getPeriodLabels(sport) {
+  if (sport === 'basketball') return {'1':'1º Quarto','2':'2º Quarto','3':'3º Quarto','4':'4º Quarto','5':'OT 1','6':'OT 2','7':'Total'};
+  if (sport === 'icehockey') return {'1':'1º Período','2':'2º Período','3':'3º Período','4':'Prorrogação','5':'Total'};
+  if (sport === 'handball') return {'1':'1º Tempo','2':'2º Tempo','3':'Prorrogação Extra','4':'Total'};
+  return {'1':'1º Tempo','2':'2º Tempo','3':'Prorrogação','4':'Pênaltis'};
+}
 
 function selectEndpoint(btn) {
   document.querySelectorAll('.endpoint-btn').forEach(b => b.classList.remove('active'));
@@ -174,10 +244,10 @@ function renderEventCard(card, ev) {
       ${ev.league ? `🏆 ${ev.league.name}` : ''}
       ${ev.league && ev.league.cc ? `<span class="meta-tag">${ev.league.cc.toUpperCase()}</span>` : ''}
       <span class="meta-tag ${statusClass}">${statusLabel}</span>
-      ${ev.timer ? `<span class="meta-tag">${ev.timer.tm}'</span>` : ''}
+      ${timerStr(ev, getSportType(ev)) ? `<span class="meta-tag">${timerStr(ev, getSportType(ev))}</span>` : ''}
     </div>
     <div class="card-teams">${ev.home?.name || '—'} <span style="color:#8b949e">vs</span> ${ev.away?.name || '—'}</div>
-    ${ev.ss ? `<div class="card-score">${ev.ss}</div>` : ''}
+    ${ev.ss ? `<div class="card-score">${formatScore(ev, getSportType(ev))}</div>` : ''}
     <div class="card-meta">
       <span class="meta-tag">ID: ${ev.id}</span>
       <span class="meta-tag">${date}</span>
@@ -341,10 +411,13 @@ function openModal(ev) {
   modalEvent = ev;
   modalTab = 'info';
 
+  const sport = getSportType(ev);
   const [statusLabel, statusClass] = STATUS_MAP[ev.time_status] || ['Desconhecido', 'status-ended'];
+  const timerBadge = timerStr(ev, sport);
   document.getElementById('m-league').innerHTML =
-    `🏆 ${ev.league?.name || '—'} ${ev.league?.cc ? `<span class="meta-tag">${ev.league.cc.toUpperCase()}</span>` : ''} <span class="meta-tag ${statusClass}">${statusLabel}</span>${ev.timer ? ` <span class="meta-tag">${ev.timer.tm}'</span>` : ''}`;
-  document.getElementById('m-teams').textContent = `${ev.home?.name || '—'}  vs  ${ev.away?.name || '—'}`;
+    `🏆 ${ev.league?.name || '—'} ${ev.league?.cc ? `<span class="meta-tag">${ev.league.cc.toUpperCase()}</span>` : ''} <span class="meta-tag ${statusClass}">${statusLabel}</span>${timerBadge ? ` <span class="meta-tag">${timerBadge}</span>` : ''}`;
+  const separator = sport === 'combat' ? ' 🥊 ' : '  vs  ';
+  document.getElementById('m-teams').textContent = `${ev.home?.name || '—'}${separator}${ev.away?.name || '—'}`;
   document.getElementById('m-score').textContent = ev.ss || '';
 
   document.querySelectorAll('.m-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
@@ -373,7 +446,25 @@ function renderModalTab(tab) {
   if (!ev) return;
 
   if (tab === 'info') {
+    const sport = getSportType(ev);
     const date = new Date(parseInt(ev.time) * 1000).toLocaleString('pt-BR');
+    const timer = timerStr(ev, sport);
+
+    // Period/Quarter label per sport
+    let periodLabel = '—';
+    if ((sport === 'soccer' || sport === 'handball') && ev.timer?.md) {
+      periodLabel = ev.timer.md === 1 ? '1º Tempo' : ev.timer.md === 2 ? '2º Tempo' : `Período ${ev.timer.md}`;
+    } else if (sport === 'basketball' && ev.timer?.q) {
+      const q = parseInt(ev.timer.q);
+      periodLabel = q <= 4 ? `${q}º Quarto` : `Prorrogação ${q - 4}`;
+    } else if (sport === 'icehockey' && ev.timer?.q) {
+      const P = {'1':'1º Período','2':'2º Período','3':'3º Período','4':'Prorrogação','5':'Shootout'};
+      periodLabel = P[ev.timer.q] || `Período ${ev.timer.q}`;
+    }
+
+    const timerRow = timer ? ['Tempo', timer] : null;
+    const isCombat = sport === 'combat';
+
     const infos = [
       ['ID do Evento', ev.id],
       ['Sport ID', ev.sport_id],
@@ -381,11 +472,35 @@ function renderModalTab(tab) {
       ['Bet365 ID', ev.bet365_id || '—'],
       ['Liga ID', ev.league?.id || '—'],
       ['País', (ev.league?.cc || ev.home?.cc || '—').toUpperCase()],
-      ['Time Casa ID', ev.home?.id || '—'],
-      ['Time Fora ID', ev.away?.id || '—'],
-      ['Minuto', ev.timer ? `${ev.timer.tm}'` : '—'],
-      ['Período', ev.timer?.md === 1 ? '1º Tempo' : ev.timer?.md === 2 ? '2º Tempo' : '—'],
-    ];
+      [isCombat ? 'Lutador A (ID)' : 'Time Casa ID', ev.home?.id || '—'],
+      [isCombat ? 'Lutador B (ID)' : 'Time Fora ID', ev.away?.id || '—'],
+      timerRow,
+      !isCombat ? ['Período', periodLabel] : null,
+    ].filter(Boolean);
+
+    // Sport-specific extra fields
+    if (sport === 'tennis') {
+      if (ev.points !== undefined) infos.push(['Pontos (game atual)', ev.points]);
+      if (ev.playing_indicator !== undefined) {
+        const serving = String(ev.playing_indicator).startsWith('0')
+          ? (ev.home?.name || 'Casa') : (ev.away?.name || 'Fora');
+        infos.push(['Sacando', '🎾 ' + serving]);
+      }
+    }
+    if (sport === 'volleyball' && ev.scores) {
+      const keys = Object.keys(ev.scores).map(Number).sort((a,b) => a-b);
+      let hw = 0, aw = 0;
+      keys.forEach(k => { const s = ev.scores[k]; if (parseInt(s.home) > parseInt(s.away)) hw++; else if (parseInt(s.away) > parseInt(s.home)) aw++; });
+      infos.push(['Sets vencidos', `${hw} — ${aw}`]);
+      if (ev.ss) infos.push(['Pontos no set atual', ev.ss]);
+    }
+    if (sport === 'tabletennis' && ev.ss) {
+      infos.push(['Sets vencidos', ev.ss]);
+    }
+    if ((sport === 'racing') && ev.round) {
+      infos.push(['Corrida nº', ev.round]);
+    }
+
     body.innerHTML = `
       <div class="m-section">
         <div class="m-section-title">Dados Gerais</div>
@@ -397,7 +512,12 @@ function renderModalTab(tab) {
 
   else if (tab === 'stats') {
     const s = ev.stats;
-    if (!s) { body.innerHTML = `<p style="color:#8b949e;padding:20px">Sem estatísticas disponíveis.</p>`; return; }
+    if (!s) {
+      const sport = getSportType(ev);
+      const msg = sport === 'soccer' ? 'Sem estatísticas disponíveis.' : 'Estatísticas detalhadas não estão disponíveis para este esporte.';
+      body.innerHTML = `<p style="color:#8b949e;padding:20px">${msg}</p>`;
+      return;
+    }
 
     const statItems = [
       ['Posse de bola', s.possession_rt, '%'],
@@ -450,16 +570,53 @@ function renderModalTab(tab) {
   else if (tab === 'scores') {
     const sc = ev.scores;
     if (!sc) { body.innerHTML = `<p style="color:#8b949e;padding:20px">Sem parciais disponíveis.</p>`; return; }
-    const PERIOD = { '1': '1º Tempo', '2': '2º Tempo', '3': 'Prorrogação', '4': 'Pênaltis' };
+
+    const sport = getSportType(ev);
+    const PERIOD = getPeriodLabels(sport);
+    // Keys that represent the running total, not a distinct period
+    const TOTAL_KEY = {basketball:'7', icehockey:'5', handball:'4'}[sport];
+    const useSetLabel = sport === 'tennis' || sport === 'tabletennis' || sport === 'volleyball';
+    const colHeader = useSetLabel ? 'Set' : 'Período';
+
     let html = `<div class="m-section"><div class="m-section-title">Parciais</div>`;
-    html += `<table class="odds-table"><thead><tr><th>Período</th><th>${ev.home?.name || 'Casa'}</th><th>${ev.away?.name || 'Fora'}</th></tr></thead><tbody>`;
-    Object.keys(sc).forEach(k => {
-      html += `<tr><td>${PERIOD[k] || 'Período ' + k}</td><td style="color:#58a6ff;font-weight:600">${sc[k].home}</td><td style="color:#f0883e;font-weight:600">${sc[k].away}</td></tr>`;
+    html += `<table class="odds-table"><thead><tr><th>${colHeader}</th><th>${ev.home?.name || 'Casa'}</th><th>${ev.away?.name || 'Fora'}</th></tr></thead><tbody>`;
+
+    Object.keys(sc).sort((a,b) => parseInt(a)-parseInt(b)).forEach(k => {
+      const isTotal = k === TOTAL_KEY;
+      const label = useSetLabel ? `Set ${k}` : (PERIOD[k] || `${colHeader} ${k}`);
+      const rowStyle = isTotal ? ' style="border-top:2px solid #30363d"' : '';
+      const tdStyle = isTotal ? 'font-weight:700;color:#e6edf3' : '';
+      const valStyle = `color:{{C}};${isTotal ? 'font-weight:700;font-size:15px' : 'font-weight:600'}`;
+      html += `<tr${rowStyle}>
+        <td style="${tdStyle}">${label}</td>
+        <td style="${valStyle.replace('{{C}}','#58a6ff')}">${sc[k].home}</td>
+        <td style="${valStyle.replace('{{C}}','#f0883e')}">${sc[k].away}</td>
+      </tr>`;
     });
-    if (ev.ss) {
-      const [th, ta] = ev.ss.split('-');
-      html += `<tr style="border-top:2px solid #30363d"><td style="font-weight:700;color:#e6edf3">Total</td><td style="color:#58a6ff;font-weight:700;font-size:16px">${th}</td><td style="color:#f0883e;font-weight:700;font-size:16px">${ta}</td></tr>`;
+
+    // For soccer/tennis/generic: show total row from ss if no total key in scores
+    if (!TOTAL_KEY && ev.ss && !useSetLabel) {
+      const parts = ev.ss.split('-');
+      if (parts.length === 2) {
+        html += `<tr style="border-top:2px solid #30363d">
+          <td style="font-weight:700;color:#e6edf3">Total</td>
+          <td style="color:#58a6ff;font-weight:700;font-size:16px">${parts[0]}</td>
+          <td style="color:#f0883e;font-weight:700;font-size:16px">${parts[1]}</td>
+        </tr>`;
+      }
     }
+    // Tennis: show sets won total
+    if (useSetLabel && ev.ss && sport !== 'volleyball') {
+      const parts = ev.ss.split('-');
+      if (parts.length === 2) {
+        html += `<tr style="border-top:2px solid #30363d">
+          <td style="font-weight:700;color:#e6edf3">Sets vencidos</td>
+          <td style="color:#58a6ff;font-weight:700;font-size:15px">${parts[0]}</td>
+          <td style="color:#f0883e;font-weight:700;font-size:15px">${parts[1]}</td>
+        </tr>`;
+      }
+    }
+
     html += `</tbody></table></div>`;
     body.innerHTML = html;
   }
