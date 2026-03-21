@@ -436,7 +436,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.g
 
 function switchModalTab(tab) {
   modalTab = tab;
-  document.querySelectorAll('.m-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase().startsWith(tab === 'info' ? 'inf' : tab === 'stats' ? 'est' : tab === 'scores' ? 'par' : 'js')));
+  const MAP = { info: 'inf', stats: 'est', scores: 'par', ai: 'pr', json: 'js' };
+  const prefix = MAP[tab] || tab;
+  document.querySelectorAll('.m-tab').forEach(t =>
+    t.classList.toggle('active', t.textContent.toLowerCase().startsWith(prefix))
+  );
   renderModalTab(tab);
 }
 
@@ -621,9 +625,59 @@ function renderModalTab(tab) {
     body.innerHTML = html;
   }
 
+  else if (tab === 'ai') {
+    renderAITab();
+  }
+
   else if (tab === 'json') {
     body.innerHTML = `<pre style="font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-all">${syntaxHighlight(JSON.stringify(ev, null, 2))}</pre>`;
   }
+}
+
+async function renderAITab() {
+  const body = document.getElementById('modal-body');
+  const ev = modalEvent;
+  if (!ev) return;
+
+  body.innerHTML = `
+    <div class="ai-loading">
+      <div class="spinner"></div>
+      <span>Analisando partida com Grok AI...</span>
+    </div>`;
+
+  try {
+    const res = await fetch(BASE + '/api/analysis/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ev),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      body.innerHTML = `<div class="ai-error">Erro: ${data.error}</div>`;
+      return;
+    }
+
+    body.innerHTML = `<div class="ai-analysis">${mdToHtml(data.analysis)}</div>`;
+  } catch (e) {
+    body.innerHTML = `<div class="ai-error">Falha ao conectar: ${e.message}</div>`;
+  }
+}
+
+function mdToHtml(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/^### (.+)$/gm, '<h4 class="ai-h4">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 class="ai-h3">$1</h3>')
+    .replace(/^# (.+)$/gm, '<h2 class="ai-h2">$1</h2>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^(?!<[hup])/m, '<p>')
+    .concat('</p>');
 }
 
 // Init
