@@ -26,6 +26,8 @@
 }
 
 .home-header p {
+  width: 100%;
+  text-align: center;
   color: var(--text-muted);
   margin-bottom: 32px;
   margin-top: 0;
