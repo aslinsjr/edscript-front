@@ -1,8 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import './SportPage.css';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { getSportBySlug } from '../constants/sports.js';
 import { fetchEvents } from '../api/client.js';
+import { usePreferences } from '../contexts/PreferencesContext.jsx';
+import { useCurrentEvents } from '../contexts/CurrentEventsContext.jsx';
 import EventCard from '../components/EventCard.jsx';
 import EventModal from '../components/EventModal.jsx';
 
@@ -15,16 +17,27 @@ const MODES = [
 export default function SportPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const sport = getSportBySlug(slug);
 
-  const [mode, setMode] = useState('inplay');
-  const [events, setEvents] = useState([]);
+  const { prefs } = usePreferences();
+  const { setCurrentEvents, setCurrentMode } = useCurrentEvents();
+  const [mode, setMode] = useState(prefs.defaultMode);
+  const [allEvents, setAllEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [initialTab, setInitialTab] = useState('info');
 
-  function openEvent(ev, tab = 'info') {
+  // league driven by URL param so deep-links and LeaguePage navigation work
+  const selectedLeague = searchParams.get('league') || '';
+
+  function setLeague(id) {
+    if (id) setSearchParams({ league: id });
+    else setSearchParams({});
+  }
+
+  function openEvent(ev, tab = prefs.defaultTab) {
     setInitialTab(tab);
     setSelectedEvent(ev);
   }
@@ -37,19 +50,45 @@ export default function SportPage() {
     try {
       const data = await fetchEvents(currentMode.endpoint, { sport_id: sport.id });
       const list = Array.isArray(data) ? data : (data.results || data.events || data.data || []);
-      setEvents(list);
+      setAllEvents(list);
+      setCurrentMode(mode);
     } catch (err) {
       setError(err.message);
-      setEvents([]);
+      setAllEvents([]);
     } finally {
       setLoading(false);
     }
   }, [sport, mode]);
 
   useEffect(() => {
-    setEvents([]);
+    setAllEvents([]);
     load();
   }, [load]);
+
+  // limpa o contexto ao sair da página
+  useEffect(() => {
+    return () => { setCurrentEvents(null); setCurrentMode(null); };
+  }, []);
+
+  const leagues = useMemo(() => {
+    const map = new Map();
+    for (const ev of allEvents) {
+      if (ev.league?.id && !map.has(ev.league.id)) {
+        map.set(ev.league.id, { id: ev.league.id, name: ev.league.name || '—' });
+      }
+    }
+    return [...map.values()];
+  }, [allEvents]);
+
+  const events = useMemo(() => (
+    selectedLeague
+      ? allEvents.filter(ev => String(ev.league?.id) === selectedLeague)
+      : allEvents
+  ), [allEvents, selectedLeague]);
+
+  useEffect(() => {
+    setCurrentEvents(events);
+  }, [events]);
 
   if (!sport) {
     return (
@@ -68,20 +107,37 @@ export default function SportPage() {
   return (
     <div className="sport-page">
       <div className="sport-page-header">
-        <div className="sport-page-title">
+        <div className="sport-page-title-row">
           <span style={{ fontSize: 28 }}>{sport.emoji}</span>
           <h2>{sport.name}</h2>
         </div>
-        <div className="mode-tabs">
-          {MODES.map(m => (
-            <button
-              key={m.key}
-              className={'mode-tab' + (mode === m.key ? ' active' : '')}
-              onClick={() => setMode(m.key)}
-            >
-              {m.label}
-            </button>
-          ))}
+        <div className="sport-page-controls">
+          <div className="mode-tabs">
+            {MODES.map(m => (
+              <button
+                key={m.key}
+                className={'mode-tab' + (mode === m.key ? ' active' : '')}
+                onClick={() => setMode(m.key)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+          {leagues.length > 1 && (
+            <div className="league-select-row">
+              <button className="back-btn" onClick={() => navigate(`/sport/${slug}`)}>←</button>
+              <select
+                className="league-select"
+                value={selectedLeague}
+                onChange={e => setLeague(e.target.value)}
+              >
+                <option value="">Todas as ligas</option>
+                {leagues.map(l => (
+                  <option key={l.id} value={String(l.id)}>{l.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </div>
 

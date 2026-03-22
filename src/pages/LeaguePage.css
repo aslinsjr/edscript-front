@@ -1,0 +1,159 @@
+.league-page {
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.league-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+  gap: 6px;
+}
+
+.league-page-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.league-page-emoji { font-size: 28px; }
+
+.league-page-title h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.league-page-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── Grid ── */
+.leagues-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+/* ── Card base ── */
+.league-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  font-family: inherit;
+  text-align: left;
+}
+
+.league-card:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-blue-tint);
+  transform: translateY(-1px);
+}
+
+/* ── Logo wrapper ── */
+.league-card-logo-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.league-card-logo-all {
+  background: var(--bg-blue-active);
+  border-color: var(--accent-blue);
+}
+
+/* ── Text info ── */
+.league-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.league-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.league-card-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.league-card-cc {
+  background: var(--bg-elevated);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-subtle);
+  letter-spacing: 0.04em;
+}
+
+/* ── "Todas" card ── */
+.league-card-all {
+  border-color: var(--border-primary);
+  background: var(--bg-elevated);
+}
+
+.league-card-all:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-blue-active);
+}
+
+.league-card-all .league-card-name { color: var(--accent-blue); }
+.league-card-all .league-card-sub  { color: var(--text-muted); }
+
+/* ── Empty ── */
+.league-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 32px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .league-page { padding: 12px; }
+
+  .leagues-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .league-card { padding: 12px; gap: 10px; }
+
+  .league-card-logo-wrap { width: 38px; height: 38px; }
+
+  .league-card-name { font-size: 12px; }
+}

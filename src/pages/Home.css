@@ -69,3 +69,33 @@
   font-weight: 600;
   text-align: center;
 }
+
+@media (max-width: 640px) {
+  .home-page {
+    width: 100%;
+    padding: 24px 16px;
+  }
+
+  .home-brand-icon {
+    width: 22dvh;
+    height: 22dvh;
+  }
+
+  .home-brand-logo {
+    width: 50%;
+    max-height: 14dvh;
+  }
+
+  .sports-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+
+  .sport-card {
+    padding: 16px 8px;
+  }
+
+  .sport-card-emoji {
+    font-size: 28px;
+  }
+}

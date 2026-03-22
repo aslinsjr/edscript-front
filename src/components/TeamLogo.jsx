@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { teamImageUrl, leagueImageUrl } from '../utils/images.js';
+import { useState, useEffect } from 'react';
+import { teamImageUrl } from '../utils/images.js';
+import { fetchLeagueLogo, getCachedLogo } from '../utils/leagueLogo.js';
 
 function Logo({ src, alt, size, className }) {
   const [failed, setFailed] = useState(false);
@@ -47,10 +48,19 @@ export function TeamLogo({ imageId, name, size = 24, className }) {
   );
 }
 
-export function LeagueLogo({ imageId, name, size = 16, className }) {
+export function LeagueLogo({ leagueId, name, cc, size = 24, className }) {
+  const [src, setSrc] = useState(() => getCachedLogo(leagueId));
+
+  useEffect(() => {
+    if (!leagueId && !name) return;
+    const cached = getCachedLogo(leagueId);
+    if (cached !== null) { setSrc(cached); return; }
+    fetchLeagueLogo(leagueId, name, cc).then(url => setSrc(url || null));
+  }, [leagueId, name, cc]);
+
   return (
     <Logo
-      src={leagueImageUrl(imageId)}
+      src={src}
       alt={name || ''}
       size={size}
       className={className}

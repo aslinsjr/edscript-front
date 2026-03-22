@@ -2,6 +2,7 @@ import { STATUS_MAP } from '../constants/status.js';
 import './EventCard.css';
 import { timerStr } from '../utils/sport.js';
 import { TeamLogo } from './TeamLogo.jsx';
+import { usePreferences } from '../contexts/PreferencesContext.jsx';
 
 function formatDate(ts) {
   if (!ts) return null;
@@ -39,6 +40,7 @@ function PossessionBar({ stats }) {
 }
 
 export default function EventCard({ ev, sportType, onClick, onAIClick }) {
+  const { prefs }  = usePreferences();
   const status    = STATUS_MAP[String(ev.time_status)] || { label: 'Desconhecido', cls: 'ended' };
   const timer     = timerStr(ev, sportType);
   const dateStr   = formatDate(ev.time);
@@ -46,7 +48,7 @@ export default function EventCard({ ev, sportType, onClick, onAIClick }) {
   const isRacing  = sportType === 'racing';
   const isCombat  = sportType === 'combat';
   const isSoccer  = sportType === 'soccer';
-  const showAIBtn = String(ev.time_status) === '0' || isLive;
+  const showAIBtn = prefs.showAIButton && (String(ev.time_status) === '0' || isLive);
   const score     = parseScore(ev.ss);
 
   const leagueDisplay = isRacing
@@ -128,7 +130,7 @@ export default function EventCard({ ev, sportType, onClick, onAIClick }) {
       </div>
 
       {/* ── Posse de bola (futebol ao vivo) ── */}
-      {isSoccer && isLive && <PossessionBar stats={ev.stats} />}
+      {isSoccer && isLive && prefs.showPossessionBar && <PossessionBar stats={ev.stats} />}
 
       {/* ── Rodapé: data + IA ── */}
       <div className="card-footer">
