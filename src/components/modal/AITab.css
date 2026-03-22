@@ -1,0 +1,114 @@
+.ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 0;
+  color: var(--text-muted);
+}
+
+.ai-loading .spinner {
+  flex-shrink: 0;
+  margin: 0;
+  width: 24px;
+  height: 24px;
+  border-width: 2px;
+}
+
+.ai-error {
+  background: var(--bg-red-tint);
+  border: 1px solid var(--accent-red);
+  border-radius: 8px;
+  padding: 14px;
+  color: var(--accent-red);
+}
+
+.ai-analysis {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+/* ── Cards ── */
+.ai-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.ai-card-highlight {
+  border-color: var(--accent-green);
+  background: var(--bg-green-tint);
+}
+
+.ai-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg-surface-2);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.ai-card-highlight .ai-card-header {
+  background: var(--bg-green-tint-2);
+  border-bottom-color: var(--accent-green);
+}
+
+.ai-card-icon  { font-size: 16px; line-height: 1; }
+
+.ai-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ai-card-body { padding: 12px 14px; }
+
+.ai-body-text {
+  margin: 4px 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+.ai-list {
+  margin: 4px 0 4px 18px;
+  padding: 0;
+  color: var(--text-secondary);
+}
+
+.ai-list li {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 4px;
+}
+
+/* ── Probabilidades ── */
+.ai-prob-row { margin: 8px 0; }
+
+.ai-prob-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.ai-prob-label { font-size: 14px; color: var(--text-secondary); }
+.ai-prob-pct   { font-size: 13px; font-weight: 700; }
+
+.ai-prob-bar-bg {
+  height: 6px;
+  background: var(--border-primary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ai-prob-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}

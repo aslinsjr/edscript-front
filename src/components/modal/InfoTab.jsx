@@ -1,4 +1,5 @@
 import { timerStr, getPeriodLabel } from '../../utils/sport.js';
+import './InfoTab.css';
 
 function formatDate(ts) {
   if (!ts) return null;

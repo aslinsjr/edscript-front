@@ -1,0 +1,140 @@
+.event-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+}
+
+.event-card:hover { border-color: var(--accent-blue); }
+
+/* ── Header ── */
+.card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.card-league {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.card-badges {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ── Teams ── */
+.card-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 8px;
+}
+
+.card-team-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-team-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-team-score {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-muted);
+  min-width: 20px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.card-team-score.score-live { color: var(--accent-blue); }
+
+.card-sep-row {
+  font-size: 12px;
+  color: var(--text-subtle);
+  padding-left: 30px;
+}
+
+/* ── Possession bar ── */
+.card-possession {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.card-possession-val {
+  font-size: 10px;
+  color: var(--text-subtle);
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.card-possession-val:last-child { text-align: right; }
+
+.card-possession-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  background: var(--bg-elevated);
+}
+
+.card-possession-home { height: 100%; background: var(--accent-blue); }
+.card-possession-away { height: 100%; background: var(--accent-orange); }
+
+/* ── Footer ── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  border-top: 1px solid var(--border-secondary);
+  padding-top: 8px;
+}
+
+.card-date {
+  font-size: 11px;
+  color: var(--text-subtle);
+}
+
+.card-ai-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--accent-purple-dark);
+  border-radius: 5px;
+  color: var(--accent-purple);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.card-ai-btn:hover {
+  background: var(--bg-purple-tint);
+  color: var(--accent-purple-light);
+}

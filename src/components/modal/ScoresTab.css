@@ -1,0 +1,29 @@
+.scores-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.scores-table th {
+  background: var(--bg-elevated);
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.scores-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+}
+
+.scores-table tr:hover td { background: var(--bg-hover-row); }
+
+.row-total        { border-top: 2px solid var(--border-primary); }
+.cell-total-label { font-weight: 700; color: var(--text-primary); }
+.cell-total       { font-weight: 700; font-size: 15px; }
+.cell-home        { color: var(--accent-blue); font-weight: 600; }
+.cell-away        { color: var(--accent-orange); font-weight: 600; }

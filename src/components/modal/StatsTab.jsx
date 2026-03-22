@@ -1,22 +1,19 @@
-// Stats key reference for soccer (bet365 stat IDs)
-// 1: Possession %, 7: Shots on target, 8: Shots off target,
-// 34: Attacks, 35: Dangerous attacks, 43: Corners,
-// 44: Fouls, 45: Yellow cards, 46: Red cards,
-// 50: Penalties, 52: Goals, 57: xG
+import './StatsTab.css';
 
+// Stats keyed by API field name; values come as [homeVal, awayVal]
 const SOCCER_STATS = [
-  { key: '1',  label: 'Posse de bola',      unit: '%' },
-  { key: '7',  label: 'Chutes no alvo',     unit: '' },
-  { key: '8',  label: 'Chutes fora',        unit: '' },
-  { key: '34', label: 'Ataques',            unit: '' },
-  { key: '35', label: 'Ataques perigosos',  unit: '' },
-  { key: '43', label: 'Escanteios',         unit: '' },
-  { key: '44', label: 'Faltas',             unit: '' },
-  { key: '45', label: 'Cartões amarelos',   unit: '' },
-  { key: '46', label: 'Cartões vermelhos',  unit: '' },
-  { key: '50', label: 'Pênaltis',           unit: '' },
-  { key: '52', label: 'Gols',               unit: '' },
-  { key: '57', label: 'xG',                 unit: '' },
+  { key: 'possession_rt',    label: 'Posse de bola',        unit: '%' },
+  { key: 'on_target',        label: 'Chutes no alvo',       unit: '' },
+  { key: 'off_target',       label: 'Chutes fora',          unit: '' },
+  { key: 'attacks',          label: 'Ataques',              unit: '' },
+  { key: 'dangerous_attacks',label: 'Ataques perigosos',    unit: '' },
+  { key: 'corners',          label: 'Escanteios',           unit: '' },
+  { key: 'key_passes',       label: 'Passes-chave',         unit: '' },
+  { key: 'passing_accuracy', label: 'Precisão de passe',    unit: '%' },
+  { key: 'penalties',        label: 'Pênaltis',             unit: '' },
+  { key: 'redcards',         label: 'Cartões vermelhos',    unit: '' },
+  { key: 'substitutions',    label: 'Substituições',        unit: '' },
+  { key: 'goals',            label: 'Gols',                 unit: '' },
 ];
 
 function StatBar({ label, homeVal, awayVal, unit }) {
@@ -61,7 +58,8 @@ export default function StatsTab({ ev, sport }) {
     );
   }
 
-  const availableStats = SOCCER_STATS.filter(s => stats[s.key] && typeof stats[s.key] === 'object');
+  // API returns values as [homeVal, awayVal] arrays
+  const availableStats = SOCCER_STATS.filter(s => Array.isArray(stats[s.key]));
 
   if (availableStats.length === 0) {
     return (
@@ -79,13 +77,13 @@ export default function StatsTab({ ev, sport }) {
         <span style={{ color: '#f0883e', fontWeight: 600 }}>{ev.away?.name || 'Visitante'}</span>
       </div>
       {availableStats.map(s => {
-        const entry = stats[s.key];
+        const [homeVal, awayVal] = stats[s.key];
         return (
           <StatBar
             key={s.key}
             label={s.label}
-            homeVal={entry.home !== undefined ? entry.home : '0'}
-            awayVal={entry.away !== undefined ? entry.away : '0'}
+            homeVal={homeVal ?? '0'}
+            awayVal={awayVal ?? '0'}
             unit={s.unit}
           />
         );

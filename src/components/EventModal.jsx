@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
+import './EventModal.css';
 import { STATUS_MAP } from '../constants/status.js';
 import { timerStr } from '../utils/sport.js';
+import { TeamLogo } from './TeamLogo.jsx';
 import InfoTab from './modal/InfoTab.jsx';
 import StatsTab from './modal/StatsTab.jsx';
 import ScoresTab from './modal/ScoresTab.jsx';
 import AITab from './modal/AITab.jsx';
 
-const TABS = [
+const ALL_TABS = [
   { key: 'info',   label: 'Informações' },
   { key: 'stats',  label: 'Estatísticas' },
   { key: 'scores', label: 'Parciais' },
@@ -22,8 +24,24 @@ function formatDate(ts) {
   });
 }
 
-export default function EventModal({ ev, sport, onClose }) {
-  const [tab, setTab] = useState('info');
+export default function EventModal({ ev, sport, onClose, initialTab = 'info' }) {
+  const [tab, setTab] = useState(initialTab);
+
+  const isUpcoming = String(ev.time_status) === '0';
+  const isEnded    = !isUpcoming && String(ev.time_status) !== '1';
+  const isSoccer   = sport.type === 'soccer';
+
+  const TABS = ALL_TABS.filter(t => {
+    if (t.key === 'stats'  && (!isSoccer || isUpcoming)) return false;
+    if (t.key === 'scores' && isUpcoming)                return false;
+    if (t.key === 'ai'     && isEnded)                   return false;
+    return true;
+  });
+
+  // Se a aba ativa não existir mais (ex: mudança de evento), volta para info
+  useEffect(() => {
+    if (!TABS.find(t => t.key === tab)) setTab('info');
+  }, [TABS, tab]);
 
   // Escape key + scroll lock
   useEffect(() => {
@@ -47,13 +65,29 @@ export default function EventModal({ ev, sport, onClose }) {
   const isRacing = sport.type === 'racing';
   const isCombat = sport.type === 'combat';
 
-  let matchupText;
+  let matchupNode;
   if (isRacing) {
-    matchupText = ev.league?.name || 'Corrida';
+    matchupNode = <span>{ev.league?.name || 'Corrida'}</span>;
   } else if (isCombat) {
-    matchupText = `${ev.home?.name || 'Lutador A'} 🥊 ${ev.away?.name || 'Lutador B'}`;
+    matchupNode = (
+      <span className="modal-matchup-teams">
+        <TeamLogo imageId={ev.home?.image_id} name={ev.home?.name} size={28} />
+        {ev.home?.name || 'Lutador A'}
+        <span className="modal-matchup-sep">🥊</span>
+        <TeamLogo imageId={ev.away?.image_id} name={ev.away?.name} size={28} />
+        {ev.away?.name || 'Lutador B'}
+      </span>
+    );
   } else {
-    matchupText = `${ev.home?.name || '—'} vs ${ev.away?.name || '—'}`;
+    matchupNode = (
+      <span className="modal-matchup-teams">
+        <TeamLogo imageId={ev.home?.image_id} name={ev.home?.name} size={28} />
+        {ev.home?.name || '—'}
+        <span className="modal-matchup-sep">vs</span>
+        <TeamLogo imageId={ev.away?.image_id} name={ev.away?.name} size={28} />
+        {ev.away?.name || '—'}
+      </span>
+    );
   }
 
   function handleOverlayClick(e) {
@@ -76,7 +110,7 @@ export default function EventModal({ ev, sport, onClose }) {
               <span className={`badge badge-${status.cls}`}>{status.label}</span>
               {timer && <span className="badge badge-timer">{timer}</span>}
             </div>
-            <div className="modal-matchup">{matchupText}</div>
+            <div className="modal-matchup">{matchupNode}</div>
             {ev.ss && !isRacing && (
               <div className="modal-score">{ev.ss}</div>
             )}

@@ -1,0 +1,53 @@
+.stats-teams-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+
+.stat-bar-block { margin-bottom: 10px; }
+
+.stat-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-val {
+  width: 40px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.stat-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-elevated);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+}
+
+.stat-bar-home {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 4px 0 0 4px;
+  transition: width 0.3s;
+}
+
+.stat-bar-away {
+  height: 100%;
+  background: var(--accent-orange);
+  border-radius: 0 4px 4px 0;
+  transition: width 0.3s;
+}
+
+.stat-label {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-subtle);
+  margin-top: 4px;
+}

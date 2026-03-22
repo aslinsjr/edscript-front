@@ -1,4 +1,5 @@
 import { getPeriodLabels, getTotalKey } from '../../utils/sport.js';
+import './ScoresTab.css';
 
 function buildSoccerRows(scores, periodLabels) {
   if (!scores) return [];

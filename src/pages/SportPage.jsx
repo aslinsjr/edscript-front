@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import './SportPage.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSportBySlug } from '../constants/sports.js';
 import { fetchEvents } from '../api/client.js';
@@ -21,6 +22,12 @@ export default function SportPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [initialTab, setInitialTab] = useState('info');
+
+  function openEvent(ev, tab = 'info') {
+    setInitialTab(tab);
+    setSelectedEvent(ev);
+  }
 
   const load = useCallback(async () => {
     if (!sport) return;
@@ -112,7 +119,8 @@ export default function SportPage() {
               key={ev.id}
               ev={ev}
               sportType={sport.type}
-              onClick={() => setSelectedEvent(ev)}
+              onClick={() => openEvent(ev)}
+              onAIClick={() => openEvent(ev, 'ai')}
             />
           ))}
         </div>
@@ -122,6 +130,7 @@ export default function SportPage() {
         <EventModal
           ev={selectedEvent}
           sport={sport}
+          initialTab={initialTab}
           onClose={() => setSelectedEvent(null)}
         />
       )}

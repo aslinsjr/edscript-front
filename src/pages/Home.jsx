@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { SPORTS } from '../constants/sports.js';
+import './Home.css';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -7,7 +8,16 @@ export default function Home() {
   return (
     <div className="home-page">
       <div className="home-header">
-        <h1>⚡ Sports Explorer</h1>
+        <div className="home-brand">
+          <picture>
+            <source srcSet="/icon-light.png" media="(prefers-color-scheme: light)" />
+            <img src="/icon-dark.png" alt="" className="home-brand-icon" />
+          </picture>
+          <picture>
+            <source srcSet="/logo-light.png" media="(prefers-color-scheme: light)" />
+            <img src="/logo.png" alt="Sports Explorer" className="home-brand-logo" />
+          </picture>
+        </div>
         <p>Explore eventos esportivos ao vivo, próximos e encerrados de todo o mundo.</p>
       </div>
       <div className="sports-grid">
