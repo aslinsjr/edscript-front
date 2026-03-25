@@ -1,0 +1,97 @@
+.trend-teams-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.trend-home-label { color: #58a6ff; }
+.trend-away-label { color: #f0883e; }
+
+.trend-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trend-bar-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trend-bar-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.trend-val-home {
+  color: #58a6ff;
+  font-weight: 600;
+  width: 40px;
+  text-align: left;
+}
+
+.trend-label {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  flex: 1;
+  text-align: center;
+}
+
+.trend-val-away {
+  color: #f0883e;
+  font-weight: 600;
+  width: 40px;
+  text-align: right;
+}
+
+.trend-bar-track {
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  background: var(--border-primary, #21262d);
+}
+
+.trend-bar-home {
+  height: 100%;
+  background: #58a6ff;
+  transition: width 0.4s ease;
+}
+
+.trend-bar-away {
+  height: 100%;
+  background: #f0883e;
+  transition: width 0.4s ease;
+}
+
+/* ── Evolução ── */
+
+.trend-evolution-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trend-evolution {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: var(--bg-surface, #161b22);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.trend-evo-label {
+  color: var(--text-secondary, #c9d1d9);
+}
+
+.trend-evo-range {
+  color: var(--text-muted, #8b949e);
+  font-size: 11px;
+}

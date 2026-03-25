@@ -3,6 +3,7 @@ import './SportPage.css';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { getSportBySlug } from '../constants/sports.js';
 import { fetchEvents } from '../api/client.js';
+import { isEsoccer } from '../utils/sport.js';
 import { usePreferences } from '../contexts/PreferencesContext.jsx';
 import { useCurrentEvents } from '../contexts/CurrentEventsContext.jsx';
 import EventCard from '../components/EventCard.jsx';
@@ -48,8 +49,32 @@ export default function SportPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchEvents(currentMode.endpoint, { sport_id: sport.id });
-      const list = Array.isArray(data) ? data : (data.results || data.events || data.data || []);
+      const isEsports = sport.id === 151;
+      const isSoccer  = sport.type === 'soccer';
+
+      let list = [];
+
+      if (isEsports) {
+        // E-Sports: busca sport_id=151 + esoccer do sport_id=1 em paralelo
+        const [esportsData, soccerData] = await Promise.all([
+          fetchEvents(currentMode.endpoint, { sport_id: 151 }),
+          fetchEvents(currentMode.endpoint, { sport_id: 1 }),
+        ]);
+        const esportsList = Array.isArray(esportsData)
+          ? esportsData
+          : (esportsData.results || esportsData.events || esportsData.data || []);
+        const soccerList = Array.isArray(soccerData)
+          ? soccerData
+          : (soccerData.results || soccerData.events || soccerData.data || []);
+
+        list = [...esportsList, ...soccerList.filter(isEsoccer)];
+      } else {
+        const data = await fetchEvents(currentMode.endpoint, { sport_id: sport.id });
+        list = Array.isArray(data) ? data : (data.results || data.events || data.data || []);
+        // Futebol/Futsal: remove esoccer (pertencem a E-Sports)
+        if (isSoccer) list = list.filter(ev => !isEsoccer(ev));
+      }
+
       setAllEvents(list);
       setCurrentMode(mode);
     } catch (err) {

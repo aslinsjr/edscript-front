@@ -1,0 +1,161 @@
+.rr-section {
+  margin-top: 36px;
+  border-top: 1px solid var(--border-primary, #21262d);
+  padding-top: 24px;
+}
+
+.rr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.rr-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary, #c9d1d9);
+}
+
+.rr-sport-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.rr-sport-btn {
+  background: none;
+  border: 1px solid var(--border-primary, #21262d);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  line-height: 1;
+}
+
+.rr-sport-btn.active {
+  border-color: var(--accent-blue, #58a6ff);
+  background: var(--bg-blue-tint, rgba(88, 166, 255, 0.08));
+}
+
+.rr-loading {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.rr-empty {
+  font-size: 13px;
+  color: var(--text-muted, #8b949e);
+  text-align: center;
+  padding: 16px 0;
+}
+
+.rr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rr-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--bg-surface, #161b22);
+  border: 1px solid var(--border-primary, #21262d);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+
+.rr-row:hover {
+  border-color: var(--accent-blue, #58a6ff);
+  background: var(--bg-blue-tint, rgba(88, 166, 255, 0.06));
+}
+
+.rr-league {
+  font-size: 10px;
+  color: var(--text-muted, #8b949e);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rr-matchup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rr-team {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rr-team-away {
+  justify-content: flex-end;
+}
+
+.rr-team-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #e6edf3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rr-away-name {
+  text-align: right;
+}
+
+.rr-score {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.rr-score-home {
+  font-size: 16px;
+  font-weight: 700;
+  color: #58a6ff;
+  min-width: 16px;
+  text-align: right;
+}
+
+.rr-score-away {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0883e;
+  min-width: 16px;
+  text-align: left;
+}
+
+.rr-score-sep {
+  font-size: 14px;
+  color: var(--text-muted, #8b949e);
+}
+
+.rr-score-empty {
+  font-size: 14px;
+  color: var(--text-muted, #8b949e);
+  flex-shrink: 0;
+}
+
+.rr-date {
+  font-size: 10px;
+  color: var(--text-muted, #8b949e);
+  text-align: right;
+}

@@ -1,0 +1,121 @@
+.odds-favorite-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-blue-tint, rgba(88, 166, 255, 0.08));
+  border: 1px solid var(--accent-blue, #58a6ff);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.odds-fav-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-blue, #58a6ff);
+  background: rgba(88, 166, 255, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.odds-fav-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #e6edf3);
+}
+
+.odds-1x2-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.odds-1x2-grid:has(.odds-block:only-child),
+.odds-1x2-grid:has(.odds-block:nth-child(2):last-child) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.odds-block {
+  background: var(--bg-surface, #161b22);
+  border: 1px solid var(--border-primary, #21262d);
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+
+.odds-block-fav {
+  border-color: var(--accent-blue, #58a6ff);
+  background: var(--bg-blue-tint, rgba(88, 166, 255, 0.08));
+}
+
+.odds-block-label {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.odds-block-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary, #e6edf3);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.odds-block-fav .odds-block-value {
+  color: var(--accent-blue, #58a6ff);
+}
+
+.odds-block-implied {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+}
+
+.odds-note {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+/* ── Tabela de histórico ─── */
+
+.odds-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.odds-history-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, #8b949e);
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-primary, #21262d);
+}
+
+.odds-history-table td {
+  padding: 7px 8px;
+  color: var(--text-secondary, #c9d1d9);
+  border-bottom: 1px solid var(--border-primary, #21262d);
+}
+
+.odds-hist-time {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e) !important;
+}
+
+.odds-history-table tr:last-child td {
+  border-bottom: none;
+}

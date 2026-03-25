@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { analyzeEvent } from '../../api/client.js';
+import { usePreferences } from '../../contexts/PreferencesContext.jsx';
 import './AITab.css';
 
 // ─── mapeamento de seções ─────────────────────────────────────────────────────
@@ -160,6 +161,7 @@ function SectionCard({ rawTitle, lines }) {
 // ─── componente principal ─────────────────────────────────────────────────────
 
 export default function AITab({ ev }) {
+  const { prefs } = usePreferences();
   const [status, setStatus] = useState('idle');
   const [result, setResult] = useState(null);
   const [errMsg, setErrMsg] = useState('');
@@ -170,7 +172,7 @@ export default function AITab({ ev }) {
     setResult(null);
     setErrMsg('');
 
-    analyzeEvent(ev)
+    analyzeEvent(ev, prefs.knowledgeLevel)
       .then(data => {
         if (cancelled) return;
         setResult(data);

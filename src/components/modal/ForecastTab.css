@@ -1,0 +1,237 @@
+.forecast-note {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  margin-bottom: 16px;
+  margin-top: -4px;
+}
+
+/* ── barras de probabilidade ── */
+
+.forecast-probs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.forecast-prob-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.forecast-prob-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forecast-prob-label {
+  font-size: 13px;
+  color: var(--text-secondary, #c9d1d9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.forecast-prob-val {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.forecast-prob-track {
+  height: 8px;
+  background: var(--border-primary, #21262d);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.forecast-prob-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* ── xG ── */
+
+.xg-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.xg-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.xg-team-away {
+  align-items: center;
+}
+
+.xg-name {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.xg-home { color: #58a6ff; }
+.xg-away { color: #f0883e; }
+
+.xg-val {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary, #e6edf3);
+  line-height: 1;
+}
+
+.xg-sep {
+  font-size: 18px;
+  color: var(--text-muted, #8b949e);
+  align-self: center;
+}
+
+/* ── top placares ── */
+
+.forecast-score-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.forecast-score-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #8b949e);
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-primary, #21262d);
+}
+
+.forecast-score-table td {
+  padding: 6px 8px;
+  color: var(--text-secondary, #c9d1d9);
+  border-bottom: 1px solid var(--border-primary, #21262d);
+}
+
+.forecast-score-table tr:last-child td {
+  border-bottom: none;
+}
+
+.score-row-top td {
+  background: rgba(88, 166, 255, 0.06);
+  font-weight: 600;
+}
+
+.score-rank {
+  color: var(--text-muted, #8b949e);
+  font-size: 11px;
+  width: 24px;
+}
+
+.score-result {
+  font-variant-numeric: tabular-nums;
+}
+
+.score-home { color: #58a6ff; font-size: 11px; }
+.score-away { color: #f0883e; font-size: 11px; }
+
+.score-prob {
+  text-align: right;
+  font-weight: 600;
+  color: #3fb950;
+  font-size: 12px;
+}
+
+/* ── forma recente ── */
+
+.forecast-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.forecast-form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-team-name {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-home .form-team-name { color: #58a6ff; }
+.form-away .form-team-name { color: #f0883e; }
+
+.form-chars {
+  display: flex;
+  gap: 4px;
+}
+
+.form-char {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border-primary, #21262d);
+  color: var(--text-muted, #8b949e);
+}
+
+.form-w { background: rgba(63, 185, 80, 0.2); color: #3fb950; }
+.form-d { background: rgba(139, 148, 158, 0.2); color: #8b949e; }
+.form-l { background: rgba(240, 136, 62, 0.2); color: #f0883e; }
+
+/* ── H2H ── */
+
+.h2h-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.h2h-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-surface, #161b22);
+  border-radius: 8px;
+  padding: 10px 8px;
+}
+
+.h2h-num {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary, #e6edf3);
+  line-height: 1;
+}
+
+.h2h-home { color: #58a6ff; }
+.h2h-away { color: #f0883e; }
+
+.h2h-label {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

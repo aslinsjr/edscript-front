@@ -3,16 +3,35 @@ import './EventModal.css';
 import { STATUS_MAP } from '../constants/status.js';
 import { timerStr } from '../utils/sport.js';
 import { TeamLogo } from './TeamLogo.jsx';
-import InfoTab from './modal/InfoTab.jsx';
-import StatsTab from './modal/StatsTab.jsx';
-import ScoresTab from './modal/ScoresTab.jsx';
-import AITab from './modal/AITab.jsx';
+import { usePreferences } from '../contexts/PreferencesContext.jsx';
+import InfoTab     from './modal/InfoTab.jsx';
+import StatsTab    from './modal/StatsTab.jsx';
+import ScoresTab   from './modal/ScoresTab.jsx';
+import OddsTab     from './modal/OddsTab.jsx';
+import LineupTab   from './modal/LineupTab.jsx';
+import TrendsTab   from './modal/TrendsTab.jsx';
+import ForecastTab from './modal/ForecastTab.jsx';
+import AITab       from './modal/AITab.jsx';
+
+// ─── nível numérico para comparação ──────────────────────────────────────
+
+const LEVEL_RANK = { beginner: 0, intermediate: 1, advanced: 2 };
+
+function levelAtLeast(userLevel, minLevel) {
+  return LEVEL_RANK[userLevel] >= LEVEL_RANK[minLevel];
+}
+
+// ─── definição de todas as abas ───────────────────────────────────────────
 
 const ALL_TABS = [
-  { key: 'info',   label: 'Informações' },
-  { key: 'stats',  label: 'Estatísticas' },
-  { key: 'scores', label: 'Parciais' },
-  { key: 'ai',     label: '✦ Análise IA', ai: true },
+  { key: 'info',     label: 'Informações' },
+  { key: 'stats',    label: 'Estatísticas' },
+  { key: 'scores',   label: 'Parciais' },
+  { key: 'odds',     label: 'Odds' },
+  { key: 'lineup',   label: 'Escalação' },
+  { key: 'trends',   label: 'Tendências',  minLevel: 'intermediate' },
+  { key: 'forecast', label: '📊 Previsão', minLevel: 'advanced' },
+  { key: 'ai',       label: '✦ Análise IA', ai: true },
 ];
 
 function formatDate(ts) {
@@ -25,6 +44,8 @@ function formatDate(ts) {
 }
 
 export default function EventModal({ ev, sport, onClose, initialTab = 'info' }) {
+  const { prefs } = usePreferences();
+  const level = prefs.knowledgeLevel;
   const [tab, setTab] = useState(initialTab);
 
   const isUpcoming = String(ev.time_status) === '0';
@@ -32,9 +53,13 @@ export default function EventModal({ ev, sport, onClose, initialTab = 'info' }) 
   const isSoccer   = sport.type === 'soccer';
 
   const TABS = ALL_TABS.filter(t => {
-    if (t.key === 'stats'  && (!isSoccer || isUpcoming)) return false;
-    if (t.key === 'scores' && isUpcoming)                return false;
-    if (t.key === 'ai'     && isEnded)                   return false;
+    if (t.minLevel && !levelAtLeast(level, t.minLevel)) return false;
+    if (t.key === 'stats'    && (!isSoccer || isUpcoming))   return false;
+    if (t.key === 'scores'   && isUpcoming)                  return false;
+    if (t.key === 'odds'     && isEnded)                     return false;
+    if (t.key === 'trends'   && (!isSoccer || isUpcoming))   return false;
+    if (t.key === 'forecast' && (!isSoccer || isEnded))      return false;
+    if (t.key === 'ai'       && isEnded)                     return false;
     return true;
   });
 
@@ -134,10 +159,14 @@ export default function EventModal({ ev, sport, onClose, initialTab = 'info' }) 
         </div>
 
         <div className="modal-body">
-          {tab === 'info'   && <InfoTab   ev={ev} sport={sport} />}
-          {tab === 'stats'  && <StatsTab  ev={ev} sport={sport} />}
-          {tab === 'scores' && <ScoresTab ev={ev} sport={sport} />}
-          {tab === 'ai'     && <AITab     ev={ev} sport={sport} />}
+          {tab === 'info'     && <InfoTab     ev={ev} sport={sport} />}
+          {tab === 'stats'    && <StatsTab    ev={ev} sport={sport} />}
+          {tab === 'scores'   && <ScoresTab   ev={ev} sport={sport} />}
+          {tab === 'odds'     && <OddsTab     ev={ev} level={level} />}
+          {tab === 'lineup'   && <LineupTab   ev={ev} level={level} />}
+          {tab === 'trends'   && <TrendsTab   ev={ev} level={level} />}
+          {tab === 'forecast' && <ForecastTab ev={ev} />}
+          {tab === 'ai'       && <AITab       ev={ev} sport={sport} />}
         </div>
       </div>
     </div>

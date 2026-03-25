@@ -1,3 +1,9 @@
+// Eventos "eSOCCER" chegam como sport_id=1 (futebol) mas pertencem a E-Sports
+export function isEsoccer(ev) {
+  const name = ev.league?.name || ev.league?.cc || '';
+  return /esoccer|e-soccer|e soccer/i.test(name);
+}
+
 export function timerStr(ev, sportType) {
   if (!ev.timer) return null;
   const t = ev.timer;

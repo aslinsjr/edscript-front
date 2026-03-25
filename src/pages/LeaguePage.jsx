@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSportBySlug } from '../constants/sports.js';
 import { fetchEvents } from '../api/client.js';
+import { isEsoccer } from '../utils/sport.js';
 import { LeagueLogo } from '../components/TeamLogo.jsx';
 import './LeaguePage.css';
 
@@ -23,14 +24,35 @@ export default function LeaguePage() {
     setLoading(true);
     setError(null);
 
-    Promise.all([
-      fetchEvents('/api/events/inplay', { sport_id: sport.id }),
-      fetchEvents('/api/events/upcoming', { sport_id: sport.id }),
-    ])
-      .then(([inplay, upcoming]) => {
-        const allEvents = [...toList(inplay), ...toList(upcoming)];
-        const leagueMap = new Map();
+    const isEsports = sport.id === 151;
+    const isSoccer  = sport.type === 'soccer';
 
+    const fetches = isEsports
+      ? [
+          fetchEvents('/api/events/inplay',   { sport_id: 151 }),
+          fetchEvents('/api/events/upcoming', { sport_id: 151 }),
+          fetchEvents('/api/events/inplay',   { sport_id: 1 }),
+          fetchEvents('/api/events/upcoming', { sport_id: 1 }),
+        ]
+      : [
+          fetchEvents('/api/events/inplay',   { sport_id: sport.id }),
+          fetchEvents('/api/events/upcoming', { sport_id: sport.id }),
+        ];
+
+    Promise.all(fetches)
+      .then(results => {
+        let allEvents = results.flatMap(toList);
+
+        if (isEsports) {
+          // Mantém eventos do sport 151 + apenas esoccer do sport 1
+          const from151 = results.slice(0, 2).flatMap(toList);
+          const soccer  = results.slice(2, 4).flatMap(toList).filter(isEsoccer);
+          allEvents = [...from151, ...soccer];
+        } else if (isSoccer) {
+          allEvents = allEvents.filter(ev => !isEsoccer(ev));
+        }
+
+        const leagueMap = new Map();
         for (const ev of allEvents) {
           if (!ev.league?.id) continue;
           if (!leagueMap.has(ev.league.id)) {

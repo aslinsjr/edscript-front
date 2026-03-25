@@ -32,3 +32,7 @@ export const SPORTS = [
 export function getSportBySlug(slug) {
   return SPORTS.find(s => s.slug === slug);
 }
+
+export function getSportById(id) {
+  return SPORTS.find(s => s.id === Number(id)) || null;
+}

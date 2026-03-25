@@ -63,12 +63,36 @@ export async function sendChat({ message, sportIds, knowledgeLevel, events }) {
   return res.json();
 }
 
-export async function analyzeEvent(event) {
+export async function analyzeEvent(event, knowledgeLevel = 'intermediate') {
   const res = await fetch(BASE + '/api/analysis/event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(event),
+    body: JSON.stringify({ ...event, knowledge_level: knowledgeLevel }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
+}
+
+export async function fetchOdds(eventId) {
+  return fetchEvents('/api/event/odds', { event_id: eventId });
+}
+
+export async function fetchOddsSummary(eventId) {
+  return fetchEvents('/api/event/odds/summary', { event_id: eventId });
+}
+
+export async function fetchLineup(eventId) {
+  return fetchEvents('/api/event/lineup', { event_id: eventId });
+}
+
+export async function fetchStatsTrend(eventId) {
+  return fetchEvents('/api/event/stats_trend', { event_id: eventId });
+}
+
+export async function fetchForecast(eventId) {
+  return fetchEvents('/api/statistics/forecast', { event_id: eventId });
+}
+
+export async function searchEvents(params) {
+  return fetchEvents('/api/events/search', params);
 }
