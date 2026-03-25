@@ -44,20 +44,23 @@
   font-family: inherit;
   flex-shrink: 0;
 }
-.sidebar-close-btn:hover { color: var(--text-primary); }
 
-.sidebar-overlay { display: none; }
+.sidebar-close-btn:hover {
+  color: var(--text-primary);
+}
+
+.sidebar-overlay {
+  display: none;
+}
 
 .sidebar-icon {
-  width: 10dvh;
-  height: 10dvh;
+  width: 35%;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .sidebar-logo {
-  max-height: 6dvh;
-  width: auto;
+  width: 65%;
   object-fit: contain;
 }
 
@@ -76,7 +79,9 @@
   transition: background 0.15s, color 0.15s;
 }
 
-.sidebar-link:hover { background: var(--bg-elevated); }
+.sidebar-link:hover {
+  background: var(--bg-elevated);
+}
 
 .sidebar-link.active {
   background: var(--bg-blue-active);
@@ -84,12 +89,26 @@
   border-left: 2px solid var(--accent-blue);
 }
 
-.sport-emoji { margin-right: 8px; }
+.sport-emoji {
+  margin-right: 8px;
+}
 
 /* ── Mobile topbar (oculto no desktop) ── */
-.mobile-topbar  { display: none; }
-.mobile-brand   { display: flex; align-items: center; text-decoration: none; }
-.mobile-brand-logo { height: 28px; width: auto; object-fit: contain; }
+.mobile-topbar {
+  display: none;
+}
+
+.mobile-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.mobile-brand-logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
 
 .hamburger-btn {
   background: none;
@@ -103,7 +122,11 @@
   line-height: 1;
   flex-shrink: 0;
 }
-.hamburger-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+.hamburger-btn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
 
 /* ── Main ── */
 .main-content {
@@ -138,7 +161,10 @@
     box-shadow: 4px 0 32px var(--modal-shadow);
   }
 
-  .sidebar-close-btn { display: flex; align-items: center; }
+  .sidebar-close-btn {
+    display: flex;
+    align-items: center;
+  }
 
   .sidebar-overlay {
     display: block;
