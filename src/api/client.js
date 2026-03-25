@@ -96,3 +96,12 @@ export async function fetchForecast(eventId) {
 export async function searchEvents(params) {
   return fetchEvents('/api/events/search', params);
 }
+
+export async function fetchNews(sportSlugs, { language = 'pt', country = 'br', page } = {}) {
+  return fetchEvents('/api/news', {
+    sports:   sportSlugs.join(','),
+    language,
+    country,
+    ...(page ? { page } : {}),
+  });
+}

@@ -35,11 +35,74 @@
   margin: 0;
 }
 
+/* ── Por país ── */
+.leagues-by-country {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.country-section {
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.country-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--bg-elevated);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.country-header:hover { background: var(--bg-blue-tint); }
+
+.country-flag-img {
+  width: 28px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.country-flag-fallback { font-size: 20px; line-height: 1; }
+
+.country-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.country-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.country-chevron {
+  font-size: 18px;
+  color: var(--text-muted);
+  transform: rotate(90deg);
+  transition: transform 0.2s;
+  line-height: 1;
+}
+
+.country-chevron.open { transform: rotate(-90deg); }
+
 /* ── Grid ── */
 .leagues-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 10px;
+  padding: 10px;
+  background: var(--bg-surface);
 }
 
 /* ── Card base ── */
@@ -123,6 +186,7 @@
 .league-card-all {
   border-color: var(--border-primary);
   background: var(--bg-elevated);
+  margin-bottom: 8px;
 }
 
 .league-card-all:hover {

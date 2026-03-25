@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchEvents } from '../api/client.js';
 import { SPORTS } from '../constants/sports.js';
+import { isEsoccer } from '../utils/sport.js';
 import { TeamLogo } from './TeamLogo.jsx';
 import './RecentResults.css';
 
@@ -67,7 +68,8 @@ export default function RecentResults({ favoriteSports, onEventSelect }) {
     fetchEvents('/api/events/ended', { sport_id: currentSport.id })
       .then(data => {
         if (cancelled) return;
-        const list = Array.isArray(data) ? data : (data.results || data.events || data.data || []);
+        let list = Array.isArray(data) ? data : (data.results || data.events || data.data || []);
+        if (currentSport.type === 'soccer') list = list.filter(ev => !isEsoccer(ev));
         setEvents(list.slice(0, 10));
         setLoading(false);
       })

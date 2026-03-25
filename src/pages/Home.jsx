@@ -6,6 +6,7 @@ import { useResolvedTheme } from '../hooks/useResolvedTheme.js';
 import SearchBar     from '../components/SearchBar.jsx';
 import RecentResults from '../components/RecentResults.jsx';
 import EventModal    from '../components/EventModal.jsx';
+import NewsSlider    from '../components/NewsSlider.jsx';
 import './Home.css';
 
 export default function Home() {
@@ -42,17 +43,23 @@ export default function Home() {
         <SearchBar onEventSelect={handleEventSelect} />
       )}
 
-      <div className="sports-grid">
-        {visibleSports.map(sport => (
-          <button
-            key={sport.id}
-            className="sport-card"
-            onClick={() => navigate(`/sport/${sport.slug}`)}
-          >
-            <span className="sport-card-emoji">{sport.emoji}</span>
-            <span className="sport-card-name">{sport.name}</span>
-          </button>
-        ))}
+      <div className="home-main">
+        <div className="sports-grid">
+          {visibleSports.map(sport => (
+            <button
+              key={sport.id}
+              className="sport-card"
+              onClick={() => navigate(`/sport/${sport.slug}`)}
+            >
+              <span className="sport-card-emoji">{sport.emoji}</span>
+              <span className="sport-card-name">{sport.name}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="home-news">
+          <NewsSlider favoriteSportIds={prefs.favoriteSports} />
+        </div>
       </div>
 
       {isIntermediate && (

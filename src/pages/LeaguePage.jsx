@@ -6,6 +6,57 @@ import { isEsoccer } from '../utils/sport.js';
 import { LeagueLogo } from '../components/TeamLogo.jsx';
 import './LeaguePage.css';
 
+const CC_NAMES = {
+  br: 'Brasil', us: 'Estados Unidos', gb: 'Inglaterra', es: 'Espanha',
+  de: 'Alemanha', fr: 'França', it: 'Itália', pt: 'Portugal',
+  nl: 'Holanda', be: 'Bélgica', ar: 'Argentina', mx: 'México',
+  tr: 'Turquia', ru: 'Rússia', jp: 'Japão', cn: 'China',
+  au: 'Austrália', kr: 'Coreia do Sul', sa: 'Arábia Saudita',
+  ng: 'Nigéria', za: 'África do Sul', eg: 'Egito', ma: 'Marrocos',
+  cl: 'Chile', co: 'Colômbia', pe: 'Peru', uy: 'Uruguai',
+  at: 'Áustria', ch: 'Suíça', pl: 'Polônia', se: 'Suécia',
+  no: 'Noruega', dk: 'Dinamarca', fi: 'Finlândia', cz: 'República Tcheca',
+  ro: 'Romênia', hu: 'Hungria', ua: 'Ucrânia', gr: 'Grécia',
+  hr: 'Croácia', rs: 'Sérvia', sk: 'Eslováquia', si: 'Eslovênia',
+  bg: 'Bulgária', by: 'Bielorrússia', az: 'Azerbaijão', ge: 'Geórgia',
+  il: 'Israel', ir: 'Irã', in: 'Índia', pk: 'Paquistão',
+  international: 'Internacional', world: 'Mundial',
+};
+
+function CountryFlag({ cc }) {
+  if (!cc || cc.length !== 2) return <span className="country-flag-fallback">🌐</span>;
+  return (
+    <img
+      className="country-flag-img"
+      src={`https://flagcdn.com/w40/${cc.toLowerCase()}.png`}
+      alt={cc.toUpperCase()}
+      onError={e => { e.currentTarget.style.display = 'none'; }}
+    />
+  );
+}
+
+function ccName(cc) {
+  if (!cc) return 'Outros';
+  return CC_NAMES[cc.toLowerCase()] || cc.toUpperCase();
+}
+
+function groupByCountry(leagues) {
+  const map = new Map();
+  for (const l of leagues) {
+    const key = l.cc?.toLowerCase() || '';
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(l);
+  }
+  // ordena países pelo total de eventos (desc)
+  return [...map.entries()]
+    .map(([cc, items]) => ({ cc, items, total: items.reduce((s, l) => s + l.count, 0) }))
+    .sort((a, b) => {
+      if (!a.cc && b.cc) return 1;
+      if (a.cc && !b.cc) return -1;
+      return b.total - a.total;
+    });
+}
+
 function toList(d) {
   return Array.isArray(d) ? d : (d?.results || d?.events || d?.data || []);
 }
@@ -18,6 +69,15 @@ export default function LeaguePage() {
   const [leagues, setLeagues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [collapsed, setCollapsed] = useState(new Set());
+
+  function toggleCountry(cc) {
+    setCollapsed(prev => {
+      const next = new Set(prev);
+      next.has(cc) ? next.delete(cc) : next.add(cc);
+      return next;
+    });
+  }
 
   useEffect(() => {
     if (!sport) return;
@@ -107,7 +167,7 @@ export default function LeaguePage() {
           <span>Carregando ligas...</span>
         </div>
       ) : (
-        <div className="leagues-grid">
+        <div className="leagues-by-country">
           <button className="league-card league-card-all" onClick={() => goToEvents(null)}>
             <div className="league-card-logo-wrap league-card-logo-all">
               <span style={{ fontSize: 28 }}>{sport.emoji}</span>
@@ -118,28 +178,44 @@ export default function LeaguePage() {
             </div>
           </button>
 
-          {leagues.map(league => (
-            <button
-              key={league.id}
-              className="league-card"
-              onClick={() => goToEvents(league.id)}
-            >
-              <div className="league-card-logo-wrap">
-                <LeagueLogo leagueId={league.id} name={league.name} cc={league.cc} size={32} />
-              </div>
-              <div className="league-card-info">
-                <span className="league-card-name">{league.name}</span>
-                <span className="league-card-sub">
-                  {league.cc && <span className="league-card-cc">{league.cc.toUpperCase()}</span>}
-                  {league.count} evento{league.count !== 1 ? 's' : ''}
-                </span>
-              </div>
-            </button>
-          ))}
-
           {leagues.length === 0 && !error && (
             <p className="league-empty">Nenhuma liga encontrada no momento.</p>
           )}
+
+          {groupByCountry(leagues).map(({ cc, items, total }) => {
+            const isOpen = !collapsed.has(cc);
+            return (
+              <div key={cc || '_'} className="country-section">
+                <button className="country-header" onClick={() => toggleCountry(cc)}>
+                  <CountryFlag cc={cc} />
+                  <span className="country-name">{ccName(cc)}</span>
+                  <span className="country-meta">{items.length} liga{items.length !== 1 ? 's' : ''} · {total} evento{total !== 1 ? 's' : ''}</span>
+                  <span className={`country-chevron${isOpen ? ' open' : ''}`}>›</span>
+                </button>
+                {isOpen && (
+                  <div className="leagues-grid">
+                    {items.map(league => (
+                      <button
+                        key={league.id}
+                        className="league-card"
+                        onClick={() => goToEvents(league.id)}
+                      >
+                        <div className="league-card-logo-wrap">
+                          <LeagueLogo leagueId={league.id} name={league.name} cc={league.cc} size={32} />
+                        </div>
+                        <div className="league-card-info">
+                          <span className="league-card-name">{league.name}</span>
+                          <span className="league-card-sub">
+                            {league.count} evento{league.count !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

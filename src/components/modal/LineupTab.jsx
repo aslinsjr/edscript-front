@@ -15,8 +15,8 @@ function extractTeam(data, side) {
 }
 
 function getStarters(team) {
-  const arr = team?.starting_lineups || team?.starters || team?.lineup || [];
-  return Array.isArray(arr) ? arr : [];
+  const arr = team?.startinglineup || team?.starting_lineups || team?.starters || team?.lineup || [];
+  return Array.isArray(arr) ? sortByPosition(arr) : [];
 }
 
 function getSubs(team) {
@@ -32,22 +32,49 @@ const POS_COLOR = {
   FW: '#f0883e', F:  '#f0883e',
 };
 
-function posLabel(pos) {
+// mapeia nomes completos de posição para abreviações
+const POS_NORMALIZE = {
+  GOALKEEPER: 'GK', GOALIE: 'GK', GUARD: 'GK', G: 'GK',
+  DEFENDER: 'DF', BACK: 'DF',
+  MIDFIELDER: 'MF',
+  FORWARD: 'FW', STRIKER: 'FW', ATTACKER: 'FW',
+};
+
+function normalizePos(pos) {
   if (!pos) return '';
   const p = String(pos).toUpperCase();
+  return POS_NORMALIZE[p] || p;
+}
+
+const POS_ORDER = { GK: 0, DF: 1, MF: 2, FW: 3 };
+
+function sortByPosition(players) {
+  return [...players].sort((a, b) => {
+    const pa = normalizePos(a.pos || a.position || '');
+    const pb = normalizePos(b.pos || b.position || '');
+    return (POS_ORDER[pa] ?? 9) - (POS_ORDER[pb] ?? 9);
+  });
+}
+
+function posLabel(pos) {
+  if (!pos) return '';
+  const p = normalizePos(pos);
   return POS_LABEL[p] || p;
 }
 
 function posColor(pos) {
   if (!pos) return 'var(--text-muted)';
-  return POS_COLOR[String(pos).toUpperCase()] || 'var(--text-muted)';
+  const p = normalizePos(pos);
+  return POS_COLOR[p] || 'var(--text-muted)';
 }
 
 // ─── linha de jogador ──────────────────────────────────────────────────────
 
 function PlayerRow({ player, showPos }) {
-  const name   = player.name || player.player_name || '—';
-  const number = player.number ?? player.jersey_number ?? '';
+  // API pode retornar { player: { name, id }, shirtnumber, pos } ou flat { name, number, pos }
+  const nested = player.player || {};
+  const name   = nested.name || player.name || player.player_name || '—';
+  const number = player.shirtnumber ?? player.number ?? player.jersey_number ?? '';
   const pos    = player.pos || player.position || '';
 
   return (
@@ -67,7 +94,7 @@ function TeamColumn({ teamName, teamData, level, side }) {
   const starters  = getStarters(teamData);
   const subs      = getSubs(teamData);
   const formation = teamData?.formation || null;
-  const showPos   = level !== 'beginner';
+  const showPos   = true;
   const showBench = level !== 'beginner';
   const isHome    = side === 'home';
 

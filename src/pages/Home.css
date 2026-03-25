@@ -33,9 +33,23 @@
   margin-top: 0;
 }
 
+/* ── layout principal: esportes + notícias ── */
+.home-main {
+  display: flex;
+  align-items: start;
+  gap: 5dvw;
+}
+
+.home-news {
+  width: 100%;
+  position: sticky;
+  top: 0;
+}
+
 .sports-grid {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 12px;
 }
 
@@ -68,6 +82,16 @@
   color: var(--text-secondary);
   font-weight: 600;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .home-main {
+    grid-template-columns: 1fr;
+  }
+
+  .home-news {
+    position: static;
+  }
 }
 
 @media (max-width: 640px) {

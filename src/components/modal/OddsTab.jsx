@@ -3,40 +3,56 @@ import { fetchOdds, fetchOddsSummary } from '../../api/client.js';
 import './OddsTab.css';
 
 // ─── estrutura real da API ─────────────────────────────────────────────────
-// data.results.odds["1_1"] = array de snapshots, index 0 = mais recente
-// data.results.odds["1_3"] = Over/Under
-// Campos: home_od, draw_od, away_od / over_od, under_od, handicap
+// data.results = { "Bet365": { odds: { start, kickoff, end } }, "Ladbrokes": {...}, ... }
+// Cada snapshot (start/kickoff/end): { "1_1": { home_od, draw_od, away_od, ss, time_str }, "1_3": { over_od, under_od, handicap } }
 
-function getOddsMarket(data, key) {
-  const arr = data?.results?.odds?.[key];
-  if (Array.isArray(arr) && arr.length > 0) return arr[0]; // index 0 = mais recente
+const BM_PRIORITY = ['Bet365', 'PinnacleSports', 'WilliamHill', 'Ladbrokes', 'UniBet', 'YSB88'];
+const SNAP_PRIORITY = ['end', 'kickoff', 'start'];
+const SNAP_LABEL = { start: 'Abertura', kickoff: 'Início', end: 'Atual' };
+
+function getBestBookmaker(data) {
+  const results = data?.results;
+  if (!results || typeof results !== 'object') return null;
+  for (const bm of BM_PRIORITY) {
+    if (results[bm]) return { name: bm, data: results[bm] };
+  }
+  const first = Object.entries(results)[0];
+  return first ? { name: first[0], data: first[1] } : null;
+}
+
+function getMarket(bm, market) {
+  if (!bm?.data?.odds) return null;
+  for (const snap of SNAP_PRIORITY) {
+    const m = bm.data.odds[snap]?.[market];
+    if (m) return m;
+  }
   return null;
 }
 
 function extract1x2(data) {
-  // full odds endpoint
-  const m = getOddsMarket(data, '1_1');
-  if (m?.home_od) return { home: m.home_od, draw: m.draw_od, away: m.away_od };
-
-  // summary endpoint — campos diretos em results
-  const r = data?.results;
-  if (r?.home_od) return { home: r.home_od, draw: r.draw_od, away: r.away_od };
-  if (r?.['1'])   return { home: r['1'],     draw: r['X'],     away: r['2'] };
-
+  const bm = getBestBookmaker(data);
+  const m = getMarket(bm, '1_1');
+  if (m?.home_od) return { home: m.home_od, draw: m.draw_od, away: m.away_od, bm: bm?.name };
   return null;
 }
 
 function extractOU(data) {
-  const m = getOddsMarket(data, '1_3');
+  const bm = getBestBookmaker(data);
+  const m = getMarket(bm, '1_3');
   if (!m?.over_od) return null;
   return { handicap: m.handicap || '2.5', over: m.over_od, under: m.under_od };
 }
 
 function extractHistory(data) {
-  const arr = data?.results?.odds?.['1_1'];
-  if (!Array.isArray(arr) || arr.length < 2) return null;
-  // índice 0 = mais recente; pegamos os primeiros 6 e invertemos para ordem cronológica
-  return [...arr.slice(0, 6)].reverse();
+  const bm = getBestBookmaker(data);
+  if (!bm?.data?.odds) return null;
+  const rows = SNAP_PRIORITY
+    .map(snap => {
+      const m = bm.data.odds[snap]?.['1_1'];
+      return m ? { label: SNAP_LABEL[snap], home_od: m.home_od, draw_od: m.draw_od, away_od: m.away_od, ss: m.ss } : null;
+    })
+    .filter(Boolean);
+  return rows.length >= 2 ? rows : null;
 }
 
 // ─── helpers ──────────────────────────────────────────────────────────────
@@ -141,12 +157,12 @@ function FullView({ data, ev, isAdvanced }) {
 
       {isAdvanced && history && (
         <>
-          <div className="section-title" style={{ marginTop: 20 }}>Movimento 1×2 (últimas 6 atualizações)</div>
+          <div className="section-title" style={{ marginTop: 20 }}>Movimento 1×2</div>
           <table className="odds-history-table">
             <thead>
               <tr>
+                <th>Momento</th>
                 <th>Placar</th>
-                <th>Min</th>
                 <th style={{ color: '#58a6ff' }}>{homeName.split(' ')[0]}</th>
                 <th>Emp</th>
                 <th style={{ color: '#f0883e' }}>{awayName.split(' ')[0]}</th>
@@ -155,8 +171,8 @@ function FullView({ data, ev, isAdvanced }) {
             <tbody>
               {history.map((h, i) => (
                 <tr key={i}>
+                  <td className="odds-hist-time">{h.label}</td>
                   <td className="odds-hist-time">{h.ss || '—'}</td>
-                  <td className="odds-hist-time">{h.time_str ?? '—'}</td>
                   <td>{h.home_od}</td>
                   <td>{h.draw_od}</td>
                   <td>{h.away_od}</td>
