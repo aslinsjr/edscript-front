@@ -71,7 +71,43 @@ export default function NewsSlider({ favoriteSportIds, searchBar }) {
   if (news.length === 0) {
     return (
       <div className="news-slider news-slider-empty">
-        <span>Sem notícias no momento.</span>
+        <div className="news-l-bg" />
+
+        <div className="news-panel-brand">
+          <img src={icon} alt="" className="news-panel-icon" />
+          <img src={logo} alt="Sportlyzer" className="news-panel-logo" />
+        </div>
+
+        <div className="news-sports-panel">
+          <div className="news-panel-body">
+            <span className="news-sports-label">Modalidades</span>
+            <ul className="news-sports-list">
+              {favoriteSports.map(s => (
+                <li key={s.id}>
+                  <button
+                    className="news-sport-btn"
+                    onClick={() => navigate(`/sport/${s.slug}`)}
+                  >
+                    <span className="news-sport-emoji">{s.emoji}</span>
+                    <span className="news-sport-name">{s.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {searchBar && (
+              <div className="news-panel-search">
+                {searchBar}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="news-slide news-slide-empty">
+          <div className="news-slide-content">
+            <p className="news-slide-desc">Sem notícias no momento.</p>
+          </div>
+        </div>
       </div>
     );
   }

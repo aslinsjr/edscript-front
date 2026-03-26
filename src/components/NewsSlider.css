@@ -22,14 +22,30 @@
   z-index: 0;
 }
 
-.news-slider-loading,
-.news-slider-empty {
+.news-slider-loading {
   align-items: center;
   justify-content: center;
   gap: 12px;
   color: var(--text-muted);
   font-size: 14px;
   background: var(--bg-surface);
+}
+
+.news-slider-empty {
+  background: var(--bg-surface);
+}
+
+.news-slide-empty {
+  pointer-events: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.news-slide-empty .news-slide-desc {
+  -webkit-line-clamp: unset;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
 }
 
 /* ── único backdrop em L invertido ── */
