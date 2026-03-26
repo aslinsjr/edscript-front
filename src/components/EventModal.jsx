@@ -13,6 +13,52 @@ import TrendsTab   from './modal/TrendsTab.jsx';
 import ForecastTab from './modal/ForecastTab.jsx';
 import AITab       from './modal/AITab.jsx';
 
+// ─── link de apostas ──────────────────────────────────────────────────────
+
+const SPORT_URL_SLUG = {
+  soccer:      'soccer',
+  tennis:      'tennis',
+  basketball:  'basketball',
+  icehockey:   'ice-hockey',
+  handball:    'handball',
+  volleyball:  'volleyball',
+  tabletennis: 'table-tennis',
+  combat:      'mma',
+  racing:      'motorsport',
+  generic:     'sports',
+};
+
+const CC_TO_COUNTRY = {
+  br: 'brazil',        us: 'united-states', gb: 'england',
+  de: 'germany',       fr: 'france',        es: 'spain',
+  it: 'italy',         pt: 'portugal',      ar: 'argentina',
+  mx: 'mexico',        nl: 'netherlands',   be: 'belgium',
+  tr: 'turkey',        ru: 'russia',        jp: 'japan',
+  cn: 'china',         au: 'australia',     kr: 'south-korea',
+  sa: 'saudi-arabia',  cl: 'chile',         co: 'colombia',
+  uy: 'uruguay',       pe: 'peru',          at: 'austria',
+  ch: 'switzerland',   pl: 'poland',        se: 'sweden',
+  no: 'norway',        dk: 'denmark',       gr: 'greece',
+  ua: 'ukraine',       cz: 'czech-republic',
+};
+
+function slugify(str) {
+  return String(str)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function buildBetUrl(ev, sport) {
+  const base        = 'https://esportesdasorte.bet.br/ptb/bet/fixture-detail';
+  const sportSlug   = SPORT_URL_SLUG[sport.type] || 'sports';
+  const cc          = ev.league?.cc?.toLowerCase() || '';
+  const countrySlug = CC_TO_COUNTRY[cc] || cc || 'international';
+  const leagueSlug  = slugify(ev.league?.name || 'league');
+  return `${base}/${sportSlug}/${countrySlug}/${leagueSlug}`;
+}
+
 // ─── nível numérico para comparação ──────────────────────────────────────
 
 const LEVEL_RANK = { beginner: 0, intermediate: 1, advanced: 2 };
@@ -143,7 +189,19 @@ export default function EventModal({ ev, sport, onClose, initialTab = 'info' }) 
               <div style={{ fontSize: 12, color: '#8b949e', marginTop: 2 }}>{dateStr}</div>
             )}
           </div>
-          <button className="modal-close" onClick={onClose} aria-label="Fechar">✕</button>
+          <div className="modal-header-actions">
+            {!isEnded && (
+              <a
+                className="modal-bet-btn"
+                href={buildBetUrl(ev, sport)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Apostar
+              </a>
+            )}
+            <button className="modal-close" onClick={onClose} aria-label="Fechar">✕</button>
+          </div>
         </div>
 
         <div className="modal-tabs">

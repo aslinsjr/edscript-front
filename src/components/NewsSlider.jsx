@@ -1,31 +1,39 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchNews } from '../api/client.js';
 import { SPORTS } from '../constants/sports.js';
+import { useResolvedTheme } from '../hooks/useResolvedTheme.js';
 import './NewsSlider.css';
 
-const INTERVAL = 6000; // ms entre slides
+const INTERVAL = 6000;
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
   const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-  if (diff < 60)   return 'agora';
-  if (diff < 3600) return `${Math.floor(diff / 60)}min`;
+  if (diff < 60)    return 'agora';
+  if (diff < 3600)  return `${Math.floor(diff / 60)}min`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
   return `${Math.floor(diff / 86400)}d`;
 }
 
-export default function NewsSlider({ favoriteSportIds }) {
+export default function NewsSlider({ favoriteSportIds, searchBar }) {
+  const navigate = useNavigate();
+  const theme    = useResolvedTheme();
   const [news, setNews]       = useState([]);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
   const [paused, setPaused]   = useState(false);
   const timerRef = useRef(null);
 
-  // mapeia IDs para slugs
+  const icon = theme === 'light' ? '/icon-light.png' : '/icon-dark.png';
+  const logo = theme === 'light' ? '/logo-light.png' : '/logo.png';
+
   const slugs = SPORTS
     .filter(s => favoriteSportIds.includes(s.id))
     .map(s => s.slug)
-    .slice(0, 5); // limita para não sobrecarregar a query
+    .slice(0, 5);
+
+  const favoriteSports = SPORTS.filter(s => favoriteSportIds.includes(s.id));
 
   useEffect(() => {
     if (slugs.length === 0) return;
@@ -33,7 +41,9 @@ export default function NewsSlider({ favoriteSportIds }) {
     fetchNews(slugs)
       .then(d => {
         const articles = d?.results || d?.data || d?.articles || [];
-        setNews(Array.isArray(articles) ? articles : []);
+        const withImage = (Array.isArray(articles) ? articles : [])
+          .filter(a => a.image_url || a.urlToImage || a.image);
+        setNews(withImage);
         setCurrent(0);
       })
       .catch(() => setNews([]))
@@ -67,7 +77,7 @@ export default function NewsSlider({ favoriteSportIds }) {
   }
 
   const article = news[current];
-  const image   = article.image_url || article.urlToImage || article.image || null;
+  const image   = article.image_url || article.urlToImage || article.image;
   const title   = article.title || '—';
   const desc    = article.description || article.content || '';
   const source  = article.source_id || article.source?.name || '';
@@ -80,18 +90,48 @@ export default function NewsSlider({ favoriteSportIds }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* imagem restrita à área visível (abaixo do header, à direita do painel) */}
+      <div className="news-slide-bg" style={{ backgroundImage: `url(${image})` }} />
+
+      {/* único elemento com backdrop-filter em forma de L invertido */}
+      <div className="news-l-bg" />
+
+      {/* brand bar — sem background, visual vem do news-l-bg */}
+      <div className="news-panel-brand">
+        <img src={icon} alt="" className="news-panel-icon" />
+        <img src={logo} alt="Sportlyzer" className="news-panel-logo" />
+      </div>
+
+      {/* painel esquerdo — sem background, visual vem do news-l-bg */}
+      <div className="news-sports-panel">
+        <div className="news-panel-body">
+          <span className="news-sports-label">Modalidades</span>
+          <ul className="news-sports-list">
+            {favoriteSports.map(s => (
+              <li key={s.id}>
+                <button
+                  className="news-sport-btn"
+                  onClick={() => navigate(`/sport/${s.slug}`)}
+                >
+                  <span className="news-sport-emoji">{s.emoji}</span>
+                  <span className="news-sport-name">{s.name}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          {searchBar && (
+            <div className="news-panel-search">
+              {searchBar}
+            </div>
+          )}
+        </div>
+      </div>
+
+
+      {/* lado direito — conteúdo da notícia */}
       <a className="news-slide" href={url} target="_blank" rel="noopener noreferrer">
-        {image && (
-          <div className="news-slide-img-wrap">
-            <img
-              className="news-slide-img"
-              src={image}
-              alt={title}
-              onError={e => { e.currentTarget.parentElement.style.display = 'none'; }}
-            />
-          </div>
-        )}
-        <div className="news-slide-body">
+        <div className="news-slide-content">
           <div className="news-slide-meta">
             {source && <span className="news-source">{source}</span>}
             {pubDate && <span className="news-time">{timeAgo(pubDate)}</span>}
@@ -101,6 +141,7 @@ export default function NewsSlider({ favoriteSportIds }) {
         </div>
       </a>
 
+      {/* controles */}
       <div className="news-controls">
         <button className="news-arrow" onClick={e => { e.preventDefault(); prev(); }}>‹</button>
         <div className="news-dots">

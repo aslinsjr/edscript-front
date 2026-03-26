@@ -1,7 +1,7 @@
 .rr-section {
   margin-top: 36px;
   border-top: 1px solid var(--border-primary, #21262d);
-  padding-top: 24px;
+  padding: 1rem;
 }
 
 .rr-header {
@@ -55,7 +55,7 @@
 .rr-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.5rem;
 }
 
 .rr-row {
@@ -130,7 +130,7 @@
 .rr-score-home {
   font-size: 16px;
   font-weight: 700;
-  color: #58a6ff;
+  color: var(--accent-blue);
   min-width: 16px;
   text-align: right;
 }
@@ -138,7 +138,7 @@
 .rr-score-away {
   font-size: 16px;
   font-weight: 700;
-  color: #f0883e;
+  color: var(--accent-orange);
   min-width: 16px;
   text-align: left;
 }

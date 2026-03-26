@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchEvents } from '../api/client.js';
 import { SPORTS } from '../constants/sports.js';
-import { isEsoccer } from '../utils/sport.js';
 import { TeamLogo } from './TeamLogo.jsx';
 import './RecentResults.css';
 
@@ -61,6 +60,14 @@ export default function RecentResults({ favoriteSports, onEventSelect }) {
   );
   const currentSport = SPORTS.find(s => s.id === sportId) || availableSports[0];
 
+  // Quando as preferências mudarem, reseta para o primeiro esporte disponível
+  // se o atual não estiver mais na lista
+  useEffect(() => {
+    if (!availableSports.find(s => s.id === sportId)) {
+      setSportId(availableSports[0]?.id ?? SOCCER_ID);
+    }
+  }, [favoriteSports]);
+
   useEffect(() => {
     if (!currentSport) return;
     let cancelled = false;
@@ -69,7 +76,6 @@ export default function RecentResults({ favoriteSports, onEventSelect }) {
       .then(data => {
         if (cancelled) return;
         let list = Array.isArray(data) ? data : (data.results || data.events || data.data || []);
-        if (currentSport.type === 'soccer') list = list.filter(ev => !isEsoccer(ev));
         setEvents(list.slice(0, 10));
         setLoading(false);
       })
