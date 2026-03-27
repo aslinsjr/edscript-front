@@ -43,6 +43,10 @@
   border-radius: 6px;
   font-family: inherit;
   flex-shrink: 0;
+  min-height: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-close-btn:hover {
@@ -62,6 +66,33 @@
 .sidebar-logo {
   width: 65%;
   object-fit: contain;
+}
+
+/* ── Logo theme switching (CSS-driven, sem dependência de re-render React) ── */
+
+/* padrão: tema escuro */
+.sidebar-icon--light,
+.sidebar-logo--light,
+.mobile-brand-logo--light { display: none; }
+
+/* tema claro forçado */
+:root[data-theme="light"] .sidebar-icon--dark,
+:root[data-theme="light"] .sidebar-logo--dark,
+:root[data-theme="light"] .mobile-brand-logo--dark { display: none; }
+
+:root[data-theme="light"] .sidebar-icon--light,
+:root[data-theme="light"] .sidebar-logo--light,
+:root[data-theme="light"] .mobile-brand-logo--light { display: block; }
+
+/* tema automático com sistema claro */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .sidebar-icon--dark,
+  :root:not([data-theme="dark"]) .sidebar-logo--dark,
+  :root:not([data-theme="dark"]) .mobile-brand-logo--dark { display: none; }
+
+  :root:not([data-theme="dark"]) .sidebar-icon--light,
+  :root:not([data-theme="dark"]) .sidebar-logo--light,
+  :root:not([data-theme="dark"]) .mobile-brand-logo--light { display: block; }
 }
 
 .sidebar-nav {
@@ -267,6 +298,11 @@
   font-family: inherit;
   line-height: 1;
   flex-shrink: 0;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hamburger-btn:hover {
@@ -277,6 +313,9 @@
 /* ── Main ── */
 .main-content {
   flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   background: var(--bg-base);
 }

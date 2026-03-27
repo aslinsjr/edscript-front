@@ -1,0 +1,40 @@
+.splash-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease;
+}
+
+.splash-root.splash-fade {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  animation: splash-in 0.5s ease both;
+}
+
+.splash-icon {
+  width: 50%;
+  height: auto;
+  object-fit: contain;
+}
+
+.splash-logo {
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+}
+
+@keyframes splash-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

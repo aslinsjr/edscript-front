@@ -382,4 +382,15 @@
   .onboard-sports-grid {
     grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
   }
+
+  .onboard-sport-btn  { padding: 14px 6px 12px; min-height: 72px; }
+  .onboard-sport-emoji { font-size: 26px; }
+  .onboard-sport-name  { font-size: 11px; }
+
+  .onboard-link-btn { padding: 7px 14px; min-height: 36px; font-size: 12px; }
+
+  .onboard-seg-btn  { padding: 12px 14px; min-height: 44px; }
+  .onboard-level-btn { padding: 14px 16px; min-height: 56px; }
+
+  .onboard-btn-primary { padding: 13px 28px; min-height: 48px; width: 100%; }
 }

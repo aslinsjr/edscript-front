@@ -1,16 +1,9 @@
 import { useState } from 'react';
-import { usePreferences } from '../contexts/PreferencesContext.jsx';
-import SearchBar     from '../components/SearchBar.jsx';
-import RecentResults from '../components/RecentResults.jsx';
+import AssistantChat from '../components/AssistantChat.jsx';
 import EventModal    from '../components/EventModal.jsx';
-import NewsSlider    from '../components/NewsSlider.jsx';
 import './Home.css';
 
 export default function Home() {
-  const { prefs } = usePreferences();
-
-  const isIntermediate = prefs.knowledgeLevel === 'intermediate' || prefs.knowledgeLevel === 'advanced';
-
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedSport, setSelectedSport] = useState(null);
 
@@ -22,17 +15,7 @@ export default function Home() {
 
   return (
     <div className="home-page">
-      <NewsSlider
-        favoriteSportIds={prefs.favoriteSports}
-        searchBar={isIntermediate && <SearchBar onEventSelect={handleEventSelect} />}
-      />
-
-      {isIntermediate && (
-        <RecentResults
-          favoriteSports={prefs.favoriteSports}
-          onEventSelect={handleEventSelect}
-        />
-      )}
+      <AssistantChat onEventSelect={handleEventSelect} />
 
       {selectedEvent && selectedSport && (
         <EventModal

@@ -216,8 +216,15 @@
   }
 
   .league-card { padding: 12px; gap: 10px; }
-
   .league-card-logo-wrap { width: 38px; height: 38px; }
-
   .league-card-name { font-size: 12px; }
+
+  .league-page-emoji { font-size: 22px; }
+  .league-page-title h2 { font-size: 18px; }
+
+  .country-header { min-height: 48px; }
+}
+
+@media (max-width: 400px) {
+  .leagues-grid { grid-template-columns: 1fr; }
 }

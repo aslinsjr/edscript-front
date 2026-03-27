@@ -105,6 +105,11 @@
   transition: background 0.15s;
   flex-shrink: 0;
   font-family: inherit;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-close:hover { background: var(--bg-elevated); }
@@ -168,7 +173,25 @@
   .modal-score { font-size: 22px; }
 
   .modal-tabs { padding: 8px 16px 0; overflow-x: auto; flex-wrap: nowrap; }
-  .modal-tab { padding: 7px 12px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .modal-tab {
+    padding: 10px 12px;
+    min-height: 44px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+  }
 
   .modal-body { padding: 14px; }
+}
+
+@media (max-height: 500px) and (max-width: 900px) {
+  .modal {
+    max-height: 98dvh;
+    border-radius: 12px;
+  }
+  .modal-header { padding: 10px 14px; }
+  .modal-tabs   { padding: 4px 14px 0; }
+  .modal-body   { padding: 10px 14px; }
 }

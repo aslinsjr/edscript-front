@@ -16,16 +16,20 @@ import AITab       from './modal/AITab.jsx';
 // ─── link de apostas ──────────────────────────────────────────────────────
 
 const SPORT_URL_SLUG = {
-  soccer:      'soccer',
-  tennis:      'tennis',
-  basketball:  'basketball',
-  icehockey:   'ice-hockey',
-  handball:    'handball',
-  volleyball:  'volleyball',
-  tabletennis: 'table-tennis',
-  combat:      'mma',
-  racing:      'motorsport',
-  generic:     'sports',
+  soccer:           'soccer',
+  tennis:           'tennis',
+  basketball:       'basketball',
+  icehockey:        'ice-hockey',
+  handball:         'handball',
+  volleyball:       'volleyball',
+  tabletennis:      'table-tennis',
+  americanfootball: 'american-football',
+  rugby:            'rugby-union',
+  rugbyleague:      'rugby-league',
+  baseball:         'baseball',
+  combat:           'mma',
+  racing:           'motorsport',
+  generic:          'sports',
 };
 
 const CC_TO_COUNTRY = {
@@ -102,9 +106,10 @@ export default function EventModal({ ev, sport, onClose, initialTab = 'info' }) 
     if (t.minLevel && !levelAtLeast(level, t.minLevel)) return false;
     if (t.key === 'stats'    && (!isSoccer || isUpcoming))   return false;
     if (t.key === 'scores'   && isUpcoming)                  return false;
-    if (t.key === 'odds'     && isEnded)                     return false;
+    if (t.key === 'odds'     && (isEnded || isUpcoming))      return false;
+    if (t.key === 'lineup'   && isUpcoming)                  return false;
     if (t.key === 'trends'   && (!isSoccer || isUpcoming))   return false;
-    if (t.key === 'forecast' && (!isSoccer || isEnded))      return false;
+    if (t.key === 'forecast' && (!isSoccer || !isUpcoming))   return false;
     if (t.key === 'ai'       && isEnded)                     return false;
     return true;
   });

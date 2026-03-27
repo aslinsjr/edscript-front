@@ -3,47 +3,33 @@ import { SPORTS } from '../constants/sports.js';
 import { usePreferences } from '../contexts/PreferencesContext.jsx';
 import './Onboarding.css';
 
-const MODES      = ['inplay', 'upcoming', 'ended'];
-const MODE_LABELS = { inplay: '🔴 Ao Vivo', upcoming: '🕐 Próximos', ended: '✓ Encerrados' };
-
-const TABS      = ['info', 'ai'];
-const TAB_LABELS = { info: 'Informações', ai: '✦ Análise IA' };
-
 const THEMES      = ['auto', 'dark', 'light'];
 const THEME_LABELS = { auto: '🖥 Sistema', dark: '🌙 Escuro', light: '☀️ Claro' };
 
 const LEVELS    = ['beginner', 'intermediate', 'advanced'];
 const LEVEL_META = {
-  beginner:     { label: '🌱 Iniciante',     desc: 'Explicações simples, sem jargões' },
-  intermediate: { label: '⚡ Intermediário', desc: 'Contexto tático e estatístico' },
-  advanced:     { label: '🔬 Avançado',      desc: 'Análises detalhadas e técnicas' },
+  beginner:     { label: '🌱 Simples e direto',  desc: 'Explicações claras, sem termos técnicos' },
+  intermediate: { label: '⚡ Contexto tático',   desc: 'Estatísticas, tendências e leitura de jogo' },
+  advanced:     { label: '🔬 Análise profunda',  desc: 'Dados avançados, probabilidades e comparativos' },
 };
 
 const STEPS = [
-  { key: 'sports', question: 'Quais esportes você acompanha?',           hint: 'Selecione pelo menos um. Pode mudar depois.' },
-  { key: 'mode',   question: 'Qual modo prefere ao entrar em um esporte?' },
-  { key: 'tab',    question: 'Como prefere abrir um evento?' },
-  { key: 'level',  question: 'Qual é o seu nível de conhecimento esportivo?' },
+  { key: 'sports', question: 'Quais esportes você quer acompanhar?',  hint: 'O assistente vai monitorar jogos e análises desses esportes.' },
+  { key: 'level',  question: 'Como prefere receber as análises?' },
   { key: 'theme',  question: 'Qual tema você prefere?' },
-  { key: 'cards',  question: 'O que exibir nos cards de evento?',         hint: 'Você pode ajustar isso depois nas configurações.' },
 ];
 
 export default function Onboarding() {
-  const { prefs, completeOnboarding } = usePreferences();
+  const { prefs, updatePrefs, completeOnboarding } = usePreferences();
 
-  const [step,     setStep]     = useState(0);
-  const [history,  setHistory]  = useState([]);
+  const [step,      setStep]      = useState(0);
+  const [history,   setHistory]   = useState([]);
+  const [favorites, setFavorites] = useState(prefs.favoriteSports);
+  const [level,     setLevel]     = useState(prefs.knowledgeLevel);
+  const [theme,     setTheme]     = useState(prefs.theme);
 
-  const [favorites,   setFavorites]   = useState(prefs.favoriteSports);
-  const [defaultMode, setDefaultMode] = useState(prefs.defaultMode);
-  const [defaultTab,  setDefaultTab]  = useState(prefs.defaultTab);
-  const [theme,       setTheme]       = useState(prefs.theme);
-  const [level,       setLevel]       = useState(prefs.knowledgeLevel);
-  const [showAI,      setShowAI]      = useState(prefs.showAIButton);
-  const [showPoss,    setShowPoss]    = useState(prefs.showPossessionBar);
-  const [showStats,   setShowStats]   = useState(prefs.showStatsPreview);
-
-  const bodyRef = useRef(null);
+  const originalTheme = useRef(prefs.theme);
+  const bodyRef       = useRef(null);
 
   useEffect(() => {
     const el = bodyRef.current;
@@ -62,18 +48,11 @@ export default function Onboarding() {
   function getAnswer(key) {
     switch (key) {
       case 'sports': {
-        const selected = SPORTS.filter(s => favorites.includes(s.id));
-        if (selected.length === SPORTS.length) return 'Todos os esportes';
-        return selected.map(s => s.emoji).join(' ');
+        const sel = SPORTS.filter(s => favorites.includes(s.id));
+        return sel.length === SPORTS.length ? 'Todos os esportes' : sel.map(s => s.emoji).join(' ');
       }
-      case 'mode':  return MODE_LABELS[defaultMode];
-      case 'tab':   return TAB_LABELS[defaultTab];
       case 'level': return LEVEL_META[level].label;
       case 'theme': return THEME_LABELS[theme];
-      case 'cards': {
-        const on = [showAI && 'Análise IA', showPoss && 'Posse de bola', showStats && 'Estatísticas'].filter(Boolean);
-        return on.length ? on.join(', ') : 'Apenas o básico';
-      }
     }
   }
 
@@ -86,15 +65,20 @@ export default function Onboarding() {
     } else {
       completeOnboarding({
         favoriteSports:    favorites,
-        defaultMode,
-        defaultTab,
-        theme,
         knowledgeLevel:    level,
-        showAIButton:      showAI,
-        showPossessionBar: showPoss,
-        showStatsPreview:  showStats,
+        theme,
+        defaultMode:       'inplay',
+        defaultTab:        'ai',
+        showAIButton:      true,
+        showPossessionBar: true,
+        showStatsPreview:  true,
       });
     }
+  }
+
+  function handleThemeChange(th) {
+    setTheme(th);
+    updatePrefs({ theme: th });
   }
 
   const current    = STEPS[step];
@@ -109,7 +93,7 @@ export default function Onboarding() {
           <div className="onboard-bot-avatar">✦</div>
           <div className="onboard-bot-info">
             <span className="onboard-bot-name">Sportlyzer</span>
-            <span className="onboard-bot-status">configuração inicial</span>
+            <span className="onboard-bot-status">configuração do assistente</span>
           </div>
           <div className="onboard-progress-pill">{step + 1} / {STEPS.length}</div>
         </div>
@@ -118,7 +102,7 @@ export default function Onboarding() {
         <div className="onboard-chat-body" ref={bodyRef}>
 
           <div className="onboard-bubble bot intro">
-            Olá! Vou te ajudar a personalizar sua experiência. São apenas {STEPS.length} perguntas rápidas.
+            Vou configurar seu assistente pessoal de análises esportivas. São só {STEPS.length} perguntas rápidas.
           </div>
 
           {history.map((h, i) => (
@@ -167,26 +151,6 @@ export default function Onboarding() {
             </>
           )}
 
-          {(current.key === 'mode' || current.key === 'tab' || current.key === 'theme') && (() => {
-            const opts    = current.key === 'mode' ? MODES   : current.key === 'tab' ? TABS   : THEMES;
-            const labels  = current.key === 'mode' ? MODE_LABELS : current.key === 'tab' ? TAB_LABELS : THEME_LABELS;
-            const value   = current.key === 'mode' ? defaultMode : current.key === 'tab' ? defaultTab : theme;
-            const setter  = current.key === 'mode' ? setDefaultMode : current.key === 'tab' ? setDefaultTab : setTheme;
-            return (
-              <div className="onboard-seg">
-                {opts.map(opt => (
-                  <button
-                    key={opt}
-                    className={`onboard-seg-btn${value === opt ? ' active' : ''}`}
-                    onClick={() => setter(opt)}
-                  >
-                    {labels[opt]}
-                  </button>
-                ))}
-              </div>
-            );
-          })()}
-
           {current.key === 'level' && (
             <div className="onboard-levels">
               {LEVELS.map(l => (
@@ -202,23 +166,17 @@ export default function Onboarding() {
             </div>
           )}
 
-          {current.key === 'cards' && (
-            <div className="onboard-toggles">
-              <label className="onboard-toggle">
-                <span>Botão de Análise IA nos cards</span>
-                <input type="checkbox" checked={showAI} onChange={e => setShowAI(e.target.checked)} />
-                <span className="toggle-track"><span className="toggle-thumb" /></span>
-              </label>
-              <label className="onboard-toggle">
-                <span>Barra de posse de bola (futebol ao vivo)</span>
-                <input type="checkbox" checked={showPoss} onChange={e => setShowPoss(e.target.checked)} />
-                <span className="toggle-track"><span className="toggle-thumb" /></span>
-              </label>
-              <label className="onboard-toggle">
-                <span>Prévia de estatísticas nos cards</span>
-                <input type="checkbox" checked={showStats} onChange={e => setShowStats(e.target.checked)} />
-                <span className="toggle-track"><span className="toggle-thumb" /></span>
-              </label>
+          {current.key === 'theme' && (
+            <div className="onboard-seg">
+              {THEMES.map(th => (
+                <button
+                  key={th}
+                  className={`onboard-seg-btn${theme === th ? ' active' : ''}`}
+                  onClick={() => handleThemeChange(th)}
+                >
+                  {THEME_LABELS[th]}
+                </button>
+              ))}
             </div>
           )}
 

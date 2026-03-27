@@ -8,14 +8,12 @@ import LeaguePage from './pages/LeaguePage.jsx';
 import SportPage from './pages/SportPage.jsx';
 import Onboarding from './components/Onboarding.jsx';
 import PreferencesModal from './components/PreferencesModal.jsx';
-import Chat from './components/Chat.jsx';
+import SplashScreen from './components/SplashScreen.jsx';
 import './components/PreferencesModal.css';
-import './components/Chat.css';
 
 function AppShell() {
   const { prefs } = usePreferences();
   const [showPrefs, setShowPrefs] = useState(false);
-  const [showChat,  setShowChat]  = useState(false);
 
   return (
     <>
@@ -31,25 +29,23 @@ function AppShell() {
         </Routes>
       </BrowserRouter>
 
-      <button className="chat-float-btn" onClick={() => setShowChat(true)} title="Assistente IA">
-        ✦
-      </button>
-
       <button className="pref-float-btn" onClick={() => setShowPrefs(true)} title="Preferências">
         ⚙️
       </button>
 
       {showPrefs && <PreferencesModal onClose={() => setShowPrefs(false)} />}
-      {showChat  && <Chat onClose={() => setShowChat(false)} />}
     </>
   );
 }
 
 export default function App() {
+  const [splash, setSplash] = useState(true);
+
   return (
     <PreferencesProvider>
       <CurrentEventsProvider>
-        <AppShell />
+        {splash && <SplashScreen onDone={() => setSplash(false)} />}
+        {!splash && <AppShell />}
       </CurrentEventsProvider>
     </PreferencesProvider>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SPORTS } from '../constants/sports.js';
 import { usePreferences } from '../contexts/PreferencesContext.jsx';
 import './PreferencesModal.css';
@@ -11,9 +11,9 @@ const THEMES       = ['auto', 'dark', 'light'];
 const THEME_LABELS = { auto: '🖥 Sistema', dark: '🌙 Escuro', light: '☀️ Claro' };
 const LEVELS       = ['beginner', 'intermediate', 'advanced'];
 const LEVEL_META   = {
-  beginner:     { label: '🌱 Iniciante',     desc: 'Explicações simples, sem jargões' },
-  intermediate: { label: '⚡ Intermediário', desc: 'Contexto tático e estatístico' },
-  advanced:     { label: '🔬 Avançado',      desc: 'Análises detalhadas e técnicas' },
+  beginner:     { label: '🌱 Simples e direto',  desc: 'Explicações claras, sem termos técnicos' },
+  intermediate: { label: '⚡ Contexto tático',   desc: 'Estatísticas, tendências e leitura de jogo' },
+  advanced:     { label: '🔬 Análise profunda',  desc: 'Dados avançados, probabilidades e comparativos' },
 };
 
 const GROUPS = [
@@ -44,13 +44,16 @@ export default function PreferencesModal({ onClose }) {
   const [showPoss,    setShowPoss]    = useState(prefs.showPossessionBar);
   const [showStats,   setShowStats]   = useState(prefs.showStatsPreview);
 
+  const originalTheme = useRef(prefs.theme);
+  const savedRef      = useRef(false);
+
   const currentIdx = GROUPS.findIndex(g => g.key === group);
 
   useEffect(() => {
-    function onKey(e) { if (e.key === 'Escape') onClose(); }
+    function onKey(e) { if (e.key === 'Escape') handleClose(); }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, []);
 
   function toggleSport(id) {
     setFavorites(prev =>
@@ -60,7 +63,20 @@ export default function PreferencesModal({ onClose }) {
     );
   }
 
+  function handleThemeChange(th) {
+    setTheme(th);
+    updatePrefs({ theme: th }); // preview imediato — logo atualiza em tempo real
+  }
+
+  function handleClose() {
+    if (!savedRef.current) {
+      updatePrefs({ theme: originalTheme.current }); // reverte preview se não salvou
+    }
+    onClose();
+  }
+
   function save() {
+    savedRef.current = true;
     updatePrefs({
       favoriteSports:    favorites,
       defaultMode,
@@ -81,13 +97,13 @@ export default function PreferencesModal({ onClose }) {
   function prev() { if (!isFirst) setGroup(GROUPS[currentIdx - 1].key); }
 
   return (
-    <div className="pref-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="pref-overlay" onClick={e => e.target === e.currentTarget && handleClose()}>
       <div className="pref-modal">
 
         {/* Header */}
         <div className="pref-header">
           <span className="pref-title">⚙️ Preferências</span>
-          <button className="pref-close" onClick={onClose}>✕</button>
+          <button className="pref-close" onClick={handleClose}>✕</button>
         </div>
 
         {/* Group tabs */}
@@ -188,7 +204,7 @@ export default function PreferencesModal({ onClose }) {
                 <label className="pref-label">Tema</label>
                 <div className="pref-seg">
                   {THEMES.map(th => (
-                    <button key={th} className={`pref-seg-btn${theme === th ? ' active' : ''}`} onClick={() => setTheme(th)}>
+                    <button key={th} className={`pref-seg-btn${theme === th ? ' active' : ''}`} onClick={() => handleThemeChange(th)}>
                       {THEME_LABELS[th]}
                     </button>
                   ))}

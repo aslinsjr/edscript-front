@@ -158,6 +158,12 @@
   margin-top: 8px;
 }
 
+@media (max-width: 400px) {
+  .forecast-form-grid { grid-template-columns: 1fr; }
+  .xg-val { font-size: 22px; }
+  .h2h-num { font-size: 20px; }
+}
+
 .forecast-form-col {
   display: flex;
   flex-direction: column;

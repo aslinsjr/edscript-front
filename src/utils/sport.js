@@ -57,6 +57,32 @@ export function getPeriodLabels(sportType) {
       '4': 'Total',
     };
   }
+  if (sportType === 'baseball') {
+    return {
+      '1': 'Inning 1', '2': 'Inning 2', '3': 'Inning 3',
+      '4': 'Inning 4', '5': 'Inning 5', '6': 'Inning 6',
+      '7': 'Inning 7', '8': 'Inning 8', '9': 'Inning 9',
+    };
+  }
+  if (sportType === 'americanfootball') {
+    return {
+      '1': '1º Quarto',
+      '2': '2º Quarto',
+      '3': '3º Quarto',
+      '4': '4º Quarto',
+      '5': 'Prorrogação',
+      '6': 'Total',
+    };
+  }
+  if (sportType === 'rugby' || sportType === 'rugbyleague') {
+    return {
+      '1': '1º Tempo',
+      '2': '2º Tempo',
+      '3': 'Prorrogação',
+      '4': 'Total',
+    };
+  }
+  // futebol, futsal e demais
   return {
     '1': '1º Tempo',
     '2': '2º Tempo',
@@ -81,5 +107,12 @@ export function getPeriodLabel(ev, sportType) {
 }
 
 export function getTotalKey(sportType) {
-  return { basketball: '7', icehockey: '5', handball: '4' }[sportType] || null;
+  return {
+    basketball:       '7',
+    icehockey:        '5',
+    handball:         '4',
+    americanfootball: '6',
+    rugby:            '4',
+    rugbyleague:      '4',
+  }[sportType] || null;
 }

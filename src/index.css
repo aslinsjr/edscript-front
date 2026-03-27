@@ -153,6 +153,11 @@
    ═══════════════════════════════════════════════════════════ */
 * { box-sizing: border-box; }
 
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--bg-base);

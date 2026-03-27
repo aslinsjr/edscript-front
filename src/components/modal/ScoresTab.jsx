@@ -124,64 +124,66 @@ export default function ScoresTab({ ev, sport }) {
     <div className="tab-section">
       <div className="section-title">Parciais</div>
       {hasRows ? (
-        <table className="scores-table">
-          <thead>
-            <tr>
-              <th>Período</th>
-              <th style={{ color: '#58a6ff' }}>{homeName}</th>
-              <th style={{ color: '#f0883e' }}>{awayName}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(row => (
-              <tr key={row.key} className={row.isTotal ? 'row-total' : ''}>
-                <td className={row.isTotal ? 'cell-total-label' : ''}>{row.label}</td>
-                <td className={row.isTotal ? 'cell-home cell-total' : 'cell-home'}>
-                  {row.home ?? '–'}
-                </td>
-                <td className={row.isTotal ? 'cell-away cell-total' : 'cell-away'}>
-                  {row.away ?? '–'}
-                </td>
-              </tr>
-            ))}
-
-            {/* For tennis/volleyball: show sets won from ss */}
-            {showSetsTotal && ss && (
-              <tr className="row-total">
-                <td className="cell-total-label">Sets vencidos</td>
-                <td className="cell-home cell-total">{totalHome ?? '–'}</td>
-                <td className="cell-away cell-total">{totalAway ?? '–'}</td>
-              </tr>
-            )}
-
-            {/* For soccer/generic: show total from ss if no totalKey row already added */}
-            {!isTennis && !isVolleyball && !totalKey && ss && (
-              <tr className="row-total">
-                <td className="cell-total-label">Total</td>
-                <td className="cell-home cell-total">{totalHome ?? '–'}</td>
-                <td className="cell-away cell-total">{totalAway ?? '–'}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      ) : (
-        ss && (
+        <div className="scores-table-wrap">
           <table className="scores-table">
             <thead>
               <tr>
-                <th>Placar</th>
+                <th>Período</th>
                 <th style={{ color: '#58a6ff' }}>{homeName}</th>
                 <th style={{ color: '#f0883e' }}>{awayName}</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="row-total">
-                <td className="cell-total-label">Total</td>
-                <td className="cell-home cell-total">{totalHome ?? '–'}</td>
-                <td className="cell-away cell-total">{totalAway ?? '–'}</td>
-              </tr>
+              {rows.map(row => (
+                <tr key={row.key} className={row.isTotal ? 'row-total' : ''}>
+                  <td className={row.isTotal ? 'cell-total-label' : ''}>{row.label}</td>
+                  <td className={row.isTotal ? 'cell-home cell-total' : 'cell-home'}>
+                    {row.home ?? '–'}
+                  </td>
+                  <td className={row.isTotal ? 'cell-away cell-total' : 'cell-away'}>
+                    {row.away ?? '–'}
+                  </td>
+                </tr>
+              ))}
+
+              {showSetsTotal && ss && (
+                <tr className="row-total">
+                  <td className="cell-total-label">Sets vencidos</td>
+                  <td className="cell-home cell-total">{totalHome ?? '–'}</td>
+                  <td className="cell-away cell-total">{totalAway ?? '–'}</td>
+                </tr>
+              )}
+
+              {!isTennis && !isVolleyball && !totalKey && ss && (
+                <tr className="row-total">
+                  <td className="cell-total-label">Total</td>
+                  <td className="cell-home cell-total">{totalHome ?? '–'}</td>
+                  <td className="cell-away cell-total">{totalAway ?? '–'}</td>
+                </tr>
+              )}
             </tbody>
           </table>
+        </div>
+      ) : (
+        ss && (
+          <div className="scores-table-wrap">
+            <table className="scores-table">
+              <thead>
+                <tr>
+                  <th>Placar</th>
+                  <th style={{ color: '#58a6ff' }}>{homeName}</th>
+                  <th style={{ color: '#f0883e' }}>{awayName}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="row-total">
+                  <td className="cell-total-label">Total</td>
+                  <td className="cell-home cell-total">{totalHome ?? '–'}</td>
+                  <td className="cell-away cell-total">{totalAway ?? '–'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         )
       )}
     </div>

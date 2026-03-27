@@ -1,0 +1,601 @@
+/* ── Root layout ── */
+.ac-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Messages area ── */
+.ac-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 28px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 780px;
+  width: 100%;
+  margin: 0 auto;
+  align-self: stretch;
+}
+
+/* ── Message rows ── */
+.ac-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.ac-row.user {
+  justify-content: flex-end;
+}
+
+/* ── Bot avatar ── */
+.ac-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #fff;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── Chat bubbles ── */
+@keyframes msgIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ac-bubble {
+  max-width: min(480px, 80%);
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  animation: msgIn 0.2s ease;
+}
+
+/* ── Botão inline de jogo citado na resposta ── */
+.ac-event-ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--bg-blue-tint);
+  border: 1px solid var(--accent-blue);
+  border-radius: 6px;
+  color: var(--accent-blue);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 1px 7px;
+  cursor: pointer;
+  font-family: inherit;
+  vertical-align: middle;
+  margin: 0 2px;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.ac-event-ref:hover {
+  opacity: 0.8;
+}
+
+.ac-bubble.bot {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-primary);
+  border-top-left-radius: 4px;
+}
+
+.ac-bubble.user {
+  background: var(--accent-blue);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+/* ── Typing indicator ── */
+.ac-typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 16px;
+  width: 60px;
+}
+
+.ac-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: dot 1.2s infinite;
+  flex-shrink: 0;
+}
+
+.ac-typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.ac-typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot {
+
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* ── Event chips ── */
+.ac-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: msgIn 0.2s ease;
+  max-width: 460px;
+}
+
+.ac-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.ac-chip:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-blue-tint);
+  transform: translateX(2px);
+}
+
+.ac-chip-sport {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ac-chip-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ac-chip-teams {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-chip-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ac-chip-score {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.ac-chip-league {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-chip-live {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--accent-red, #f85149);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+/* ── Event list dropdown ── */
+.ac-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: msgIn 0.2s ease;
+  max-width: min(520px, 90vw);
+}
+
+.ac-event-list-intro {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+
+.ac-league-group {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ac-league-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 9px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.ac-league-header:hover {
+  background: var(--bg-blue-tint);
+}
+
+.ac-league-flag {
+  font-size: 14px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ac-league-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-league-count {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--bg-surface-2);
+  color: var(--text-muted);
+  border-radius: 20px;
+  padding: 1px 6px;
+  flex-shrink: 0;
+}
+
+.ac-league-chevron {
+  font-size: 16px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.18s;
+  line-height: 1;
+  display: inline-block;
+  transform: rotate(90deg);
+}
+
+.ac-league-chevron.open {
+  transform: rotate(270deg);
+}
+
+.ac-league-games {
+  border-top: 1px solid var(--border-secondary);
+  padding: 4px 0;
+}
+
+.ac-game-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border-secondary);
+  transition: background 0.1s;
+}
+
+.ac-game-row:last-child {
+  border-bottom: none;
+}
+
+.ac-game-row:hover {
+  background: var(--bg-surface-2);
+}
+
+.ac-game-sport {
+  font-size: 14px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ac-game-teams {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ac-game-vs {
+  color: var(--text-muted);
+  font-weight: 400;
+  margin: 0 2px;
+}
+
+.ac-game-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ac-game-analyze {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  background: none;
+  border: 1px solid var(--accent-blue);
+  border-radius: 6px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+  transition: background 0.12s, opacity 0.12s;
+  white-space: nowrap;
+}
+
+.ac-game-analyze:hover:not(:disabled) {
+  background: var(--bg-blue-tint);
+}
+
+.ac-game-analyze:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ── Analysis card ── */
+.ac-analysis {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  overflow: hidden;
+  animation: msgIn 0.2s ease;
+  max-width: min(520px, 85%);
+}
+
+.ac-analysis-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-secondary);
+  background: var(--bg-surface-2);
+}
+
+.ac-analysis-sport {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.ac-analysis-match {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-analysis-score {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.ac-analysis-expand {
+  font-size: 11px;
+  color: var(--accent-blue);
+  background: none;
+  border: 1px solid var(--accent-blue);
+  border-radius: 6px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.ac-analysis-expand:hover {
+  background: var(--bg-blue-tint);
+}
+
+.ac-analysis-section {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.ac-analysis-section:last-child {
+  border-bottom: none;
+}
+
+.ac-analysis-section.highlight {
+  background: color-mix(in srgb, var(--accent-blue) 5%, transparent);
+}
+
+.ac-analysis-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.ac-analysis-line {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0 0 3px;
+}
+
+.ac-analysis-line.bullet::before {
+  content: '·  ';
+  color: var(--text-muted);
+}
+
+/* ── Footer / input ── */
+.ac-footer {
+  flex-shrink: 0;
+  padding: 12px 24px 20px;
+  border-top: 1px solid var(--border-secondary);
+  background: var(--bg-surface);
+}
+
+.ac-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: 14px;
+  padding: 6px 6px 6px 16px;
+  max-width: 780px;
+  margin: 0 auto;
+  transition: border-color 0.15s;
+}
+
+.ac-input-wrap:focus-within {
+  border-color: var(--accent-blue);
+}
+
+.ac-input-wrap.busy {
+  opacity: 0.65;
+}
+
+.ac-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: inherit;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+
+.ac-input::placeholder {
+  color: var(--text-subtle);
+}
+
+.ac-input:disabled {
+  opacity: 1;
+}
+
+.ac-send {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent-blue);
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.ac-send:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: scale(1.06);
+}
+
+.ac-send:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .ac-body {
+    padding: 16px 14px 10px;
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .ac-footer {
+    padding: 8px 14px 16px;
+  }
+
+  .ac-bubble {
+    font-size: 13px;
+    max-width: 90%;
+  }
+
+  .ac-input-wrap {
+    max-width: 100%;
+  }
+
+  .ac-chips {
+    max-width: 90%;
+  }
+
+  .ac-send {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .ac-event-ref {
+    padding: 4px 10px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+
+}

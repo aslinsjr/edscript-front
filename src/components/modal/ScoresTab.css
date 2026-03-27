@@ -1,5 +1,11 @@
+.scores-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .scores-table {
   width: 100%;
+  min-width: 240px;
   border-collapse: collapse;
   font-size: 13px;
 }

@@ -3,7 +3,6 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import './Layout.css';
 import { SPORTS } from '../constants/sports.js';
 import { usePreferences } from '../contexts/PreferencesContext.jsx';
-import { useResolvedTheme } from '../hooks/useResolvedTheme.js';
 import { fetchEvents } from '../api/client.js';
 import { isEsoccer } from '../utils/sport.js';
 
@@ -180,12 +179,8 @@ function SidebarSportItem({ sport, closeSidebar, defaultExpanded = false }) {
 
 export default function Layout() {
   const { prefs } = usePreferences();
-  const theme = useResolvedTheme();
   const visibleSports = SPORTS.filter(s => prefs.favoriteSports.includes(s.id));
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const icon = theme === 'light' ? '/icon-light.png' : '/icon-dark.png';
-  const logo = theme === 'light' ? '/logo-light.png' : '/logo.png';
 
   function close() { setSidebarOpen(false); }
 
@@ -196,8 +191,10 @@ export default function Layout() {
       <aside className={`sidebar${sidebarOpen ? ' sidebar-open' : ''}`}>
         <div className="sidebar-brand-row">
           <NavLink to="/" className="sidebar-brand" onClick={close}>
-            <img src={icon} alt="" className="sidebar-icon" />
-            <img src={logo} alt="Sportlyzer" className="sidebar-logo" />
+            <img src="/icon-dark.png"  alt="" className="sidebar-icon sidebar-icon--dark" />
+            <img src="/icon-light.png" alt="" className="sidebar-icon sidebar-icon--light" />
+            <img src="/logo.png"       alt="Sportlyzer" className="sidebar-logo sidebar-logo--dark" />
+            <img src="/logo-light.png" alt="Sportlyzer" className="sidebar-logo sidebar-logo--light" />
           </NavLink>
           <button className="sidebar-close-btn" onClick={close} aria-label="Fechar menu">✕</button>
         </div>
@@ -224,7 +221,8 @@ export default function Layout() {
             ☰
           </button>
           <NavLink to="/" className="mobile-brand">
-            <img src={logo} alt="Sportlyzer" className="mobile-brand-logo" />
+            <img src="/logo.png"       alt="Sportlyzer" className="mobile-brand-logo mobile-brand-logo--dark" />
+            <img src="/logo-light.png" alt="Sportlyzer" className="mobile-brand-logo mobile-brand-logo--light" />
           </NavLink>
         </div>
         <Outlet />
