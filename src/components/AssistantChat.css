@@ -575,7 +575,6 @@
 
   .ac-bubble {
     font-size: 13px;
-    max-width: 70%;
   }
 
   .ac-input-wrap {
@@ -591,6 +590,10 @@
     height: 40px;
     min-width: 40px;
     min-height: 40px;
+  }
+
+  .ac-event-list {
+    max-width: 80dvw;
   }
 
   .ac-event-ref {
