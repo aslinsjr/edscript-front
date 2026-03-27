@@ -367,18 +367,16 @@ export default function AssistantChat({ onEventSelect }) {
                     const away  = ev.away?.name || '—';
                     const sport = ev._sport || SPORTS.find(s => String(s.id) === String(ev.sport_id));
                     return (
-                      <div key={ev.id} className="ac-game-row">
+                      <button
+                        key={ev.id}
+                        className="ac-game-row"
+                        onClick={() => onEventSelect?.({ ...ev, _sport: sport }, sport)}
+                      >
                         <span className="ac-game-sport">{sport?.emoji}</span>
                         <span className="ac-game-teams">{home} <span className="ac-game-vs">×</span> {away}</span>
                         <span className="ac-game-time">{formatEventTime(ev.time)}</span>
-                        <button
-                          className="ac-game-analyze"
-                          onClick={() => !busy && handleAnalyze({ ...ev, _sport: sport })}
-                          disabled={busy}
-                        >
-                          Analisar
-                        </button>
-                      </div>
+                        <span className="ac-game-analyze">Ver ↗</span>
+                      </button>
                     );
                   })}
                 </div>

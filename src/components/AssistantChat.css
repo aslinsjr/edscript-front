@@ -327,6 +327,14 @@
   padding: 7px 12px;
   border-bottom: 1px solid var(--border-secondary);
   transition: background 0.1s;
+  width: 100%;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
 .ac-game-row:last-child {
@@ -334,7 +342,12 @@
 }
 
 .ac-game-row:hover {
-  background: var(--bg-surface-2);
+  background: var(--bg-blue-tint);
+}
+
+.ac-game-row:hover .ac-game-analyze {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
 }
 
 .ac-game-sport {
@@ -370,25 +383,13 @@
 .ac-game-analyze {
   font-size: 11px;
   font-weight: 600;
-  color: var(--accent-blue);
-  background: none;
-  border: 1px solid var(--accent-blue);
+  color: var(--text-muted);
+  border: 1px solid var(--border-secondary);
   border-radius: 6px;
   padding: 2px 8px;
-  cursor: pointer;
-  font-family: inherit;
   flex-shrink: 0;
-  transition: background 0.12s, opacity 0.12s;
   white-space: nowrap;
-}
-
-.ac-game-analyze:hover:not(:disabled) {
-  background: var(--bg-blue-tint);
-}
-
-.ac-game-analyze:disabled {
-  opacity: 0.35;
-  cursor: default;
+  transition: color 0.12s, border-color 0.12s;
 }
 
 /* ── Analysis card ── */
