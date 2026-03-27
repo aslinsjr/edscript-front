@@ -575,7 +575,7 @@
 
   .ac-bubble {
     font-size: 13px;
-    max-width: 90%;
+    max-width: 80%;
   }
 
   .ac-input-wrap {
@@ -583,7 +583,7 @@
   }
 
   .ac-chips {
-    max-width: 80%;
+    max-width: 90%;
   }
 
   .ac-send {
