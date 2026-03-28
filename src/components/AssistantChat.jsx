@@ -156,14 +156,15 @@ export default function AssistantChat({ onEventSelect }) {
 
   // ── fetch live events & initial greeting
   useEffect(() => {
-    const favSports = SPORTS.filter(s => prefs.favoriteSports.includes(s.id)).slice(0, 4);
+    const favSports  = SPORTS.filter(s => prefs.favoriteSports.includes(s.id));
+    const perSport   = Math.max(1, Math.ceil(8 / favSports.length));
 
     Promise.all(
       favSports.map(s =>
         fetchEvents('/api/events/inplay', { sport_id: s.id })
           .then(d => {
             const arr = Array.isArray(d) ? d : (d.results || d.events || d.data || []);
-            return arr.slice(0, 2).map(e => ({ ...e, _sport: s }));
+            return arr.slice(0, perSport).map(e => ({ ...e, _sport: s }));
           })
           .catch(() => [])
       )
