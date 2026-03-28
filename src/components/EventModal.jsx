@@ -202,6 +202,7 @@ export default function EventModal({ ev, sport, onClose, initialTab = 'info' }) 
                 target="_blank"
                 rel="noopener noreferrer"
               >
+                <img className='modal-bet-icon' src="./es-icon.png" alt="" />
                 Apostar
               </a>
             )}

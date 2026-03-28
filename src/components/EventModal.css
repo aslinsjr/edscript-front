@@ -80,11 +80,11 @@
 .modal-bet-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
-  background: var(--accent-green, #2ea043);
-  color: #fff;
-  font-size: 12px;
+  gap: 0.5rem;
+  padding: 5px;
+  background: #02003a;
+  color: #2ee683;
+  font-size: 10px;
   font-weight: 700;
   border-radius: 8px;
   text-decoration: none;
@@ -93,6 +93,11 @@
 }
 
 .modal-bet-btn:hover { opacity: 0.85; }
+
+.modal-bet-icon {
+  width: 25%;
+  padding: 0.5rem 0 0 0.5rem;
+}
 
 .modal-close {
   background: none;

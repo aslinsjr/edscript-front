@@ -156,6 +156,8 @@ export default function AssistantChat({ onEventSelect }) {
 
   // ── fetch live events & initial greeting
   useEffect(() => {
+    setReady(false);
+    setMessages([]);
     const favSports  = SPORTS.filter(s => prefs.favoriteSports.includes(s.id));
     const perSport   = Math.max(1, Math.ceil(8 / favSports.length));
 
@@ -169,7 +171,7 @@ export default function AssistantChat({ onEventSelect }) {
           .catch(() => [])
       )
     ).then(results => {
-      const live = results.flat();
+      const live = results.flat().slice(0, 8);
       liveRef.current = live;
 
       if (live.length > 0) {
@@ -190,7 +192,7 @@ export default function AssistantChat({ onEventSelect }) {
       }
       setReady(true);
     });
-  }, []);
+  }, [prefs.favoriteSports]);
 
   function addMsg(msg) {
     setMessages(prev => [...prev, { id: Date.now() + Math.random(), ...msg }]);

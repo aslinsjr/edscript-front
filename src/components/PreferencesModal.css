@@ -494,6 +494,7 @@
     overflow-x: auto;
     flex-wrap: nowrap;
     scrollbar-width: none;
+    justify-content: space-around;
   }
 
   .pref-groups::-webkit-scrollbar {
