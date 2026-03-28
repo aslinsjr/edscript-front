@@ -602,4 +602,8 @@
     min-height: 32px;
   }
 
+  .ac-chip-league {
+    width: 80%;
+  }
+
 }
