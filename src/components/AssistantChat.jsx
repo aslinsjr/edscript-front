@@ -232,24 +232,10 @@ export default function AssistantChat({ onEventSelect }) {
     setBusy(true);
 
     try {
-      // Busca eventos frescos antes de cada envio, igual ao Chat antigo
-      const sportIds = prefs.favoriteSports.slice(0, 5);
-      const settled  = await Promise.allSettled(
-        sportIds.map(id => fetchEvents('/api/events/inplay', { sport_id: id }))
-      );
-      const freshEvents = settled
-        .filter(r => r.status === 'fulfilled')
-        .flatMap(r => {
-          const d = r.value;
-          return Array.isArray(d) ? d : (d.results || d.events || d.data || []);
-        })
-        .slice(0, 20);
-
       const data  = await sendChat({
         message:        msg,
         sportIds:       prefs.favoriteSports,
         knowledgeLevel: prefs.knowledgeLevel,
-        events:         freshEvents,
       });
       const reply           = data.reply || data.message || data.text || JSON.stringify(data);
       const mentionedEvents = data.events || [];

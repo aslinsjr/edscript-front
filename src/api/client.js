@@ -48,7 +48,7 @@ export async function fetchEvents(endpoint, params = {}) {
   return data;
 }
 
-export async function sendChat({ message, sportIds, knowledgeLevel, events }) {
+export async function sendChat({ message, sportIds, knowledgeLevel }) {
   const res = await fetch(BASE + '/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -56,7 +56,6 @@ export async function sendChat({ message, sportIds, knowledgeLevel, events }) {
       message,
       sport_ids:       sportIds.map(String),
       knowledge_level: knowledgeLevel,
-      events:          events || [],
     }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
