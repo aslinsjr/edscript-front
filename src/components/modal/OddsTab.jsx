@@ -2,13 +2,66 @@ import { useState, useEffect } from 'react';
 import { fetchOdds, fetchOddsSummary } from '../../api/client.js';
 import './OddsTab.css';
 
-// ─── estrutura real da API ─────────────────────────────────────────────────
-// data.results = { "Bet365": { odds: { start, kickoff, end } }, "Ladbrokes": {...}, ... }
-// Cada snapshot (start/kickoff/end): { "1_1": { home_od, draw_od, away_od, ss, time_str }, "1_3": { over_od, under_od, handicap } }
+// ─── normalização: suporta dois formatos da API ────────────────────────────
+//
+// Formato A (v2/event/odds) — array por mercado:
+//   data.results.odds = { "1_1": [ { home_od, draw_od, away_od, ss, time_str }, ... ] }
+//
+// Formato B (v2/event/odds/summary) — bookmakers com snapshots:
+//   data.results = { "Bet365": { odds: { start, kickoff, end } }, ... }
+//   Cada snapshot: { "1_1": { home_od, draw_od, away_od }, "1_3": { over_od, ... } }
 
 const BM_PRIORITY = ['Bet365', 'PinnacleSports', 'WilliamHill', 'Ladbrokes', 'UniBet', 'YSB88'];
 const SNAP_PRIORITY = ['end', 'kickoff', 'start'];
 const SNAP_LABEL = { start: 'Abertura', kickoff: 'Início', end: 'Atual' };
+
+// Detecta se veio no formato array (A) ou bookmaker (B)
+function isArrayFormat(data) {
+  const odds = data?.results?.odds;
+  if (!odds) return false;
+  const firstVal = Object.values(odds)[0];
+  return Array.isArray(firstVal);
+}
+
+// ─── extratores formato A ─────────────────────────────────────────────────
+
+function getLatestOdds(data, market) {
+  const arr = data?.results?.odds?.[market];
+  return arr?.length ? arr[0] : null; // índice 0 = mais recente
+}
+
+function extract1x2_A(data) {
+  const m = getLatestOdds(data, '1_1');
+  if (m?.home_od) return { home: m.home_od, draw: m.draw_od, away: m.away_od };
+  return null;
+}
+
+function extractOU_A(data) {
+  const m = getLatestOdds(data, '1_3');
+  if (!m?.over_od) return null;
+  return { handicap: m.handicap || '2.5', over: m.over_od, under: m.under_od };
+}
+
+function extractHistory_A(data) {
+  const arr = data?.results?.odds?.['1_1'];
+  if (!arr || arr.length < 2) return null;
+  // amostra de até 5 pontos: mais antigo → mais recente
+  const reversed = [...arr].reverse();
+  const sample = reversed.length <= 5
+    ? reversed
+    : [0, 1, 2, 3, reversed.length - 1]
+        .map(i => reversed[Math.min(i * Math.floor(reversed.length / 4), reversed.length - 1)])
+        .filter((v, i, a) => a.indexOf(v) === i);
+  return sample.map(m => ({
+    label: m.time_str ? `${m.time_str}'` : '—',
+    home_od: m.home_od,
+    draw_od: m.draw_od,
+    away_od: m.away_od,
+    ss: m.ss,
+  }));
+}
+
+// ─── extratores formato B ─────────────────────────────────────────────────
 
 function getBestBookmaker(data) {
   const results = data?.results;
@@ -16,7 +69,7 @@ function getBestBookmaker(data) {
   for (const bm of BM_PRIORITY) {
     if (results[bm]) return { name: bm, data: results[bm] };
   }
-  const first = Object.entries(results)[0];
+  const first = Object.entries(results).find(([, v]) => v?.odds);
   return first ? { name: first[0], data: first[1] } : null;
 }
 
@@ -29,21 +82,21 @@ function getMarket(bm, market) {
   return null;
 }
 
-function extract1x2(data) {
+function extract1x2_B(data) {
   const bm = getBestBookmaker(data);
   const m = getMarket(bm, '1_1');
-  if (m?.home_od) return { home: m.home_od, draw: m.draw_od, away: m.away_od, bm: bm?.name };
+  if (m?.home_od) return { home: m.home_od, draw: m.draw_od, away: m.away_od };
   return null;
 }
 
-function extractOU(data) {
+function extractOU_B(data) {
   const bm = getBestBookmaker(data);
   const m = getMarket(bm, '1_3');
   if (!m?.over_od) return null;
   return { handicap: m.handicap || '2.5', over: m.over_od, under: m.under_od };
 }
 
-function extractHistory(data) {
+function extractHistory_B(data) {
   const bm = getBestBookmaker(data);
   if (!bm?.data?.odds) return null;
   const rows = SNAP_PRIORITY
@@ -53,6 +106,20 @@ function extractHistory(data) {
     })
     .filter(Boolean);
   return rows.length >= 2 ? rows : null;
+}
+
+// ─── funções públicas (detectam o formato automaticamente) ─────────────────
+
+function extract1x2(data) {
+  return isArrayFormat(data) ? extract1x2_A(data) : extract1x2_B(data);
+}
+
+function extractOU(data) {
+  return isArrayFormat(data) ? extractOU_A(data) : extractOU_B(data);
+}
+
+function extractHistory(data) {
+  return isArrayFormat(data) ? extractHistory_A(data) : extractHistory_B(data);
 }
 
 // ─── helpers ──────────────────────────────────────────────────────────────

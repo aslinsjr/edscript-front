@@ -1,18 +1,26 @@
 .trend-teams-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 16px;
   font-size: 12px;
   font-weight: 600;
 }
 
-.trend-home-label { color: #58a6ff; }
-.trend-away-label { color: #f0883e; }
+.trend-home-label  { color: #58a6ff; }
+.trend-away-label  { color: #f0883e; }
+.trend-header-center {
+  color: var(--text-muted, #8b949e);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* ── bloco de cada métrica ── */
 
 .trend-bars {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .trend-bar-block {
@@ -21,37 +29,46 @@
   gap: 4px;
 }
 
-.trend-bar-label-row {
+.trend-metric-label {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── linha com valores + barra ── */
+
+.trend-bar-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  gap: 8px;
+}
+
+.trend-val-home,
+.trend-val-away {
+  font-size: 15px;
+  font-weight: 700;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .trend-val-home {
   color: #58a6ff;
-  font-weight: 600;
-  width: 40px;
-  text-align: left;
-}
-
-.trend-label {
-  font-size: 11px;
-  color: var(--text-muted, #8b949e);
-  flex: 1;
-  text-align: center;
+  justify-content: flex-start;
 }
 
 .trend-val-away {
   color: #f0883e;
-  font-weight: 600;
-  width: 40px;
-  text-align: right;
+  justify-content: flex-end;
 }
 
 .trend-bar-track {
-  height: 8px;
-  border-radius: 4px;
+  flex: 1;
+  height: 10px;
+  border-radius: 5px;
   overflow: hidden;
   display: flex;
   background: var(--border-primary, #21262d);
@@ -69,29 +86,32 @@
   transition: width 0.4s ease;
 }
 
-/* ── Evolução ── */
+/* ── rótulo de dominância ── */
 
-.trend-evolution-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.trend-evolution {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 10px;
-  background: var(--bg-surface, #161b22);
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-.trend-evo-label {
-  color: var(--text-secondary, #c9d1d9);
-}
-
-.trend-evo-range {
-  color: var(--text-muted, #8b949e);
+.trend-dominance {
+  text-align: center;
   font-size: 11px;
+  font-weight: 600;
+}
+
+.dom-home    { color: #58a6ff; }
+.dom-away    { color: #f0883e; }
+.dom-neutral { color: var(--text-muted, #8b949e); font-weight: 400; }
+
+/* ── momentum ── */
+
+.trend-momentum {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mom-up   { color: #3fb950; }
+.mom-down { color: #f85149; }
+
+.trend-momentum-hint {
+  margin-top: 16px;
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  text-align: center;
+  line-height: 1.5;
 }
